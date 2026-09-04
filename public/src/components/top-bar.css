@@ -1,0 +1,151 @@
+/* ------- Top Bar ------- */
+
+.top-bar {
+    display: flex;
+    flex-direction: row;
+	width: 100vw;
+	height: 10vh;
+	background-color: var(--navy);
+	position: fixed;
+	z-index: 1;
+}
+
+.top-bar-branding {
+	display: flex;
+	align-items: center;
+	font-size: var(--heading-size);
+	gap: 8px;
+	margin-left: 8px;
+	height: 100%;
+	width: 20%;
+	color: var(--white-text-primary);
+	font-weight: 800;
+}
+
+.top-bar-logo {
+	max-height: 100%;
+}
+
+/* ------- Nav ------- */
+
+.top-bar-nav {
+	display: flex;
+	align-items: center;
+	width: 40%;
+	height: 100%;
+	margin-left: auto;
+}
+
+.nav-button {
+	all: unset;
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	height: 100%;
+	color: var(--white-text-muted);
+	font-size: var(--subtitle-size);
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	text-decoration: none;
+	cursor: pointer;
+	transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-button span {
+	position: relative;
+	flex: 1;
+	height: 100%;
+	box-sizing: border-box;
+	padding: 18px 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.nav-button span::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	height: 60%;
+	width: 1px;
+	background-color: rgba(250, 248, 244, 0.15);
+}
+
+.nav-button span:has(i) {
+	padding: 18px 36px;
+}
+
+.top-bar-nav > .nav-button:first-child span::before {
+	content: none;
+}
+
+.nav-button:hover {
+	color: var(--white-text-primary);
+	background-color: rgba(250, 248, 244, 0.06);
+}
+
+/* ------- Profile ------- */
+
+.profile-trigger {
+	position: relative;
+	container-type: inline-size;
+}
+
+.user-profile {
+    font-size: 30cqw;
+    color: var(--white-text-muted);  
+}
+
+.profile-menu {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 12px;
+	display: flex;
+	flex-direction: column;
+	min-width: 170px;
+	padding: 6px;
+	background-color: var(--white-text-primary);
+	border: 2px solid var(--surface);
+	border-radius: var(--border-radius);
+	box-shadow: 0 10px 24px rgba(12, 44, 74, 0.18);
+	z-index: 2;
+}
+
+.profile-menu-item {
+	all: unset;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border-radius: var(--border-radius);
+	font-size: var(--label-size);
+	font-weight: 700;
+	color: var(--navy-text-body);
+	cursor: pointer;
+	box-sizing: border-box;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.profile-menu-item i {
+	width: 14px;
+	text-align: center;
+	font-size: 0.8rem;
+}
+
+.profile-menu-item:hover {
+	background-color: var(--surface);
+	color: var(--navy);
+}
+
+.profile-menu-item-danger {
+	color: var(--urgent);
+}
+
+.profile-menu-item-danger:hover {
+	background-color: var(--urgent-focus);
+	color: var(--urgent-hover);
+}

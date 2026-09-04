@@ -1,0 +1,18 @@
+html {
+    overscroll-behavior: none;
+}
+
+body {
+	background-color: var(--bg);
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.main-section {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: row;
+	min-height: 90vh;
+	margin-top: 10vh;
+}

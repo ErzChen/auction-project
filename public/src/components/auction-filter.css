@@ -1,0 +1,84 @@
+/* ------- Filter sidebar ------- */
+
+.auction-filtering-section {
+    position: sticky;
+    overscroll-behavior: none;
+    top: 10vh;
+    display: flex;
+    justify-content: center;
+	overflow-y: auto;
+	width: 30%;
+	min-height: 90vh;
+	box-sizing: border-box;
+	padding: 28px 20px;
+	background-color: var(--bg);
+	border-right: 1px solid rgba(12, 44, 74, 0.08);
+}
+
+/* ------- Filter form ------- */
+
+.filter-form {
+    width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.filter-heading {
+	margin: 0 0 22px;
+	font-weight: 800;
+	font-size: var(--subtitle-size);
+	letter-spacing: 0.02em;
+	color: var(--navy);
+}
+
+/* Price range */
+
+.filter-price-inputs {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Buttons */
+
+.filter-apply-btn {
+	height: 42px;
+	border: none;
+	border-radius: var(--border-radius);
+	background-color: var(--init);
+	color: var(--white-text-primary);
+	font-weight: 800;
+	font-size: var(--label-size);
+	letter-spacing: 0.02em;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	margin-top: 4px;
+}
+
+.filter-apply-btn:hover {
+	background-color: var(--init-hover);
+}
+
+.filter-apply-btn:active {
+	background-color: var(--init-active);
+}
+
+.filter-apply-btn:disabled {
+	background-color: var(--init-disabled);
+	cursor: default;
+}
+
+.filter-reset-btn {
+	all: unset;
+	text-align: center;
+	margin-top: 12px;
+	font-size: var(--label-size);
+	font-weight: 700;
+	color: var(--navy-text-muted);
+	cursor: pointer;
+}
+
+.filter-reset-btn:hover {
+	color: var(--urgent);
+	text-decoration: underline;
+}

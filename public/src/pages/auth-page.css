@@ -1,0 +1,69 @@
+.auth-page {
+	display: flex;
+	flex-direction: row;
+}
+
+.auth-brand-panel {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	width: 38%;
+	height: 100vh;
+	padding: 40px;
+	background-color: var(--navy);
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.auth-branding {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-weight: 800;
+	font-size: var(--title-size);
+	color: var(--white-text-primary);
+}
+
+.auth-brand-logo {
+	height: 50px;
+}
+
+.auth-listing-display {
+	position: relative;
+	flex: 1;
+	margin: 40px 0;
+	mask-image: linear-gradient(
+		to bottom,
+		transparent 0%,
+		black 12%,
+		black 88%,
+		transparent 100%
+	);
+	overflow: hidden;
+}
+
+.auth-listing {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	animation: auth-listing-scroll 30s linear infinite;
+}
+
+.auth-listing li {
+	padding: 10px 0;
+	font-size: var(--label-size);
+	letter-spacing: 0.03em;
+	color: var(--white-text-muted);
+	border-bottom: 1px solid rgba(250, 248, 244, 0.08);
+	white-space: nowrap;
+}
+
+@keyframes auth-listing-scroll {
+	from {
+		transform: translateY(0);
+	}
+	to {
+		transform: translateY(-50%);
+	}
+}

@@ -1,0 +1,108 @@
+/* ------- Form panel ------- */
+
+.auth-form-panel {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 62%;
+	min-height: 90vh;
+	padding: 40px;
+	background-color: var(--bg);
+	box-sizing: border-box;
+}
+
+.auth-card {
+	position: relative;
+	width: 100%;
+	max-width: 420px;
+}
+
+.auth-mode-input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* Tabs */
+
+.auth-tabs {
+	position: relative;
+	display: flex;
+	margin-bottom: 32px;
+	border-bottom: 2px solid var(--surface);
+}
+
+.auth-tab {
+	all: unset;
+	flex: 1;
+	padding: 12px 0;
+	text-align: center;
+	font-weight: 700;
+	font-size: var(--subtitle-size);
+	letter-spacing: 0.02em;
+	color: var(--navy-text-muted);
+	cursor: pointer;
+	user-select: none;
+	transition: color 0.2s ease;
+}
+
+.auth-tab-indicator {
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	width: 50%;
+	height: 2px;
+	background-color: var(--init);
+	transition: transform 0.25s ease;
+}
+
+.auth-tab.active {
+	color: var(--navy);
+}
+
+/* Forms */
+
+.auth-form {
+	display: flex;
+	flex-direction: column;
+}
+
+.auth-form h1 {
+	margin: 0 0 6px;
+	font-weight: 800;
+	font-size: var(--title-size);
+	color: var(--navy);
+}
+
+.auth-form p {
+	margin: 0 0 28px;
+	font-size: var(--label-size);
+	color: var(--navy-text-muted);
+}
+
+.auth-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 18px;
+}
+
+.auth-checkbox {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: var(--label-size);
+	color: var(--navy-text-body);
+	cursor: pointer;
+}
+
+.auth-checkbox input {
+	accent-color: var(--init);
+}
+
+.auth-switch-line {
+	margin: 20px 0 0;
+	text-align: center;
+	font-size: var(--label-size);
+	color: var(--navy-text-muted);
+}
