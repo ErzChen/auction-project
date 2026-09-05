@@ -40,9 +40,9 @@ export function ListingPage() {
 	const [bidError, setBidError] = useState(null);
 	const [bidSubmitting, setBidSubmitting] = useState(false);
 	const [now, setNow] = useState(() => Date.now());
-    const [preBid, setPreBid] = useState(undefined);
-    const [preBidSubmitting, setPreBidSubmitting] = useState(false);
-    const [preBidError, setPreBidError] = useState(null);
+	const [preBid, setPreBid] = useState(undefined);
+	const [preBidSubmitting, setPreBidSubmitting] = useState(false);
+	const [preBidError, setPreBidError] = useState(null);
 
 	const { user } = useAuth();
 
@@ -87,12 +87,12 @@ export function ListingPage() {
 	const images = JSON.parse(imagePaths || '[]');
 	const sortedBids = sortBids(bids);
 	const userActiveBids = user
-		? bids.filter((b) => !b.is_cancelled && b.user_id === user.id)
+		? bids.filter((bid) => !bid.is_cancelled && bid.user_id === user.id)
 		: [];
 
 	const userBidCount = userActiveBids.length;
 	const userHighestBid = userBidCount
-		? Math.max(...userActiveBids.map((b) => b.amount))
+		? Math.max(...userActiveBids.map((bid) => bid.amount))
 		: null;
 
 	const isUserHighBidder =
@@ -100,7 +100,11 @@ export function ListingPage() {
 		displayPrice != null &&
 		userHighestBid === Number(displayPrice);
 
-	const displayValue = bidFocused ? bidAmount : bidAmount ? formatPrice(Number(bidAmount), currency) : '';
+	const displayValue = bidFocused
+		? bidAmount
+		: bidAmount
+			? formatPrice(Number(bidAmount), currency)
+			: '';
 	const { username, email } = listingUser || {};
 
 	function markImageFailed(src) {
@@ -113,14 +117,14 @@ export function ListingPage() {
 	}
 
 	function openPlaceBidModal() {
-        if (!user) {
-            window.location.href = '/pages/auth.html';
-            return;
-        }
-        setBidError(null);
+		if (!user) {
+			window.location.href = '/pages/auth.html';
+			return;
+		}
+		setBidError(null);
 		setBidAmount(nextMinBid != null ? String(nextMinBid) : '');
-        setPlaceBidModalOpen(true);
-    }
+		setPlaceBidModalOpen(true);
+	}
 
 	async function handlePlaceBid(e) {
 		e.preventDefault();
@@ -177,36 +181,37 @@ export function ListingPage() {
 	function handleBidAmountChange(e) {
 		const raw = e.target.value.replace(/[^\d.]/g, '');
 		const parts = raw.split('.');
-		const normalized = parts.length > 1 ? `${parts[0]}.${parts.slice(1).join('')}` : raw;
+		const normalized =
+			parts.length > 1 ? `${parts[0]}.${parts.slice(1).join('')}` : raw;
 		setBidAmount(normalized);
 	}
 
-    async function handleQueuePreBid() {
-        setPreBidSubmitting(true);
-        setPreBidError(null);
-        try {
-            await createPreBid(auction.auction_id);
-            setPreBid(await getPreBid(auction.auction_id));
-        } catch (err) {
-            setPreBidError(err.message || 'Something went wrong');
-        } finally {
-            setPreBidSubmitting(false);
-        }
-    }
+	async function handleQueuePreBid() {
+		setPreBidSubmitting(true);
+		setPreBidError(null);
+		try {
+			await createPreBid(auction.auction_id);
+			setPreBid(await getPreBid(auction.auction_id));
+		} catch (err) {
+			setPreBidError(err.message || 'Something went wrong');
+		} finally {
+			setPreBidSubmitting(false);
+		}
+	}
 
-    async function handleCancelPreBid() {
-        if (!preBid) return;
-        setPreBidSubmitting(true);
-        setPreBidError(null);
-        try {
-            await cancelPreBid(preBid.pre_bid_id);
-            setPreBid(null);
-        } catch (err) {
-            setPreBidError(err.message || 'Something went wrong');
-        } finally {
-            setPreBidSubmitting(false);
-        }
-    }
+	async function handleCancelPreBid() {
+		if (!preBid) return;
+		setPreBidSubmitting(true);
+		setPreBidError(null);
+		try {
+			await cancelPreBid(preBid.pre_bid_id);
+			setPreBid(null);
+		} catch (err) {
+			setPreBidError(err.message || 'Something went wrong');
+		} finally {
+			setPreBidSubmitting(false);
+		}
+	}
 
 	useEffect(() => {
 		let cancelled = false;
@@ -226,7 +231,7 @@ export function ListingPage() {
 				if (!cancelled) setError('Could not load this listing right now.');
 			})
 			.finally(() => {
-			if (!cancelled) setListingLoading(false);
+				if (!cancelled) setListingLoading(false);
 			});
 
 		return () => {
@@ -240,6 +245,7 @@ export function ListingPage() {
 	}, []);
 
 	useEffect(() => {
+		if (!auction) return;
 		const auctionId = auction.auction_id;
 		if (!auctionId) return;
 
@@ -247,7 +253,7 @@ export function ListingPage() {
 		socket.emit('join-auction', auctionId);
 
 		return () => socket.emit('leave-auction', auctionId);
-	}, [auction.auction_id]);
+	}, [auction?.auction_id]);
 
 	useEffect(() => {
 		const socket = socketRef.current;
@@ -256,11 +262,33 @@ export function ListingPage() {
 			setAuction((prev) => ({ ...prev, ...toUpdate }));
 		}
 
-		function handleNewBid(data) {
-			updateAuction()
+		function handleUpdateStatus(data) {
+			updateAuction({ status: data.status });
 		}
 
-		socket.on('new-bid', )
+		function handleNewBid(data) {
+			updateAuction({ current_price: data.current_price });
+			setBids((prev) => [...prev, data.bid]);
+		}
+
+		function handleBidCancelled(data) {
+			updateAuction({ current_price: data.current_price });
+			setBids((prev) =>
+				prev.map((bid) =>
+					bid.bid_id == data.bid_id ? { ...bid, is_cancelled: true } : bid,
+				),
+			);
+		}
+
+		socket.on('new-bid', handleNewBid);
+		socket.on('bid-cancelled', handleBidCancelled);
+		socket.on('update-auction-status', handleUpdateStatus);
+
+		return () => {
+			socket.off('new-bid', handleNewBid);
+			socket.off('bid-cancelled', handleBidCancelled);
+			socket.off('update-auction-status', handleUpdateStatus);
+		};
 	}, []);
 
 	useEffect(() => {
@@ -305,18 +333,18 @@ export function ListingPage() {
 		};
 	}, [auctionEnded, auction]);
 
-    useEffect(() => {
-        if (!auction || !user || auction.status !== 'upcoming') return;
-        let cancelled = false;
-        getPreBid(auction.auction_id)
-            .then((data) => {
-                if (!cancelled) setPreBid(data);
-            })
-            .catch((err) => console.error('Failed to load pre-bid:', err));
-        return () => {
-            cancelled = true;
-        };
-    }, [auction, user]);
+	useEffect(() => {
+		if (!auction || !user || auction.status !== 'upcoming') return;
+		let cancelled = false;
+		getPreBid(auction.auction_id)
+			.then((data) => {
+				if (!cancelled) setPreBid(data);
+			})
+			.catch((err) => console.error('Failed to load pre-bid:', err));
+		return () => {
+			cancelled = true;
+		};
+	}, [auction, user]);
 
 	return (
 		<>
@@ -324,8 +352,7 @@ export function ListingPage() {
 			{listingLoading ? (
 				<section className="listing-page">
 					<div className="listing-gallery">
-						<div className="skeleton-block listing-gallery-main">
-						</div>
+						<div className="skeleton-block listing-gallery-main"></div>
 
 						<section className="listing-description">
 							<div className="skeleton-line skeleton-line-label"></div>
@@ -335,18 +362,18 @@ export function ListingPage() {
 						<section className="listing-description">
 							<div className="skeleton-line skeleton-line-label"></div>
 							<div className="listing-timing">
-									<div className="listing-timing-row">
-										<div className="skeleton-line skeleton-line-word"></div>
-										<div className="skeleton-line skeleton-line-word"></div>
-									</div>
-									<div className="listing-timing-row">
-										<div className="skeleton-line skeleton-line-word"></div>
-										<div className="skeleton-line skeleton-line-word"></div>
-									</div>
-									<div className="listing-timing-row">
-										<div className="skeleton-line skeleton-line-word"></div>
-										<div className="skeleton-line skeleton-line-word"></div>
-									</div>
+								<div className="listing-timing-row">
+									<div className="skeleton-line skeleton-line-word"></div>
+									<div className="skeleton-line skeleton-line-word"></div>
+								</div>
+								<div className="listing-timing-row">
+									<div className="skeleton-line skeleton-line-word"></div>
+									<div className="skeleton-line skeleton-line-word"></div>
+								</div>
+								<div className="listing-timing-row">
+									<div className="skeleton-line skeleton-line-word"></div>
+									<div className="skeleton-line skeleton-line-word"></div>
+								</div>
 							</div>
 						</section>
 
@@ -358,14 +385,14 @@ export function ListingPage() {
 						<section className="listing-description">
 							<div className="skeleton-line skeleton-line-label"></div>
 							<div className="listing-timing">
-									<div className="listing-timing-row">
-										<div className="skeleton-line skeleton-line-word"></div>
-										<div className="skeleton-line skeleton-line-word"></div>
-									</div>
-									<div className="listing-timing-row">
-										<div className="skeleton-line skeleton-line-word"></div>
-										<div className="skeleton-line skeleton-line-word"></div>
-									</div>
+								<div className="listing-timing-row">
+									<div className="skeleton-line skeleton-line-word"></div>
+									<div className="skeleton-line skeleton-line-word"></div>
+								</div>
+								<div className="listing-timing-row">
+									<div className="skeleton-line skeleton-line-word"></div>
+									<div className="skeleton-line skeleton-line-word"></div>
+								</div>
 							</div>
 						</section>
 					</div>
@@ -413,7 +440,7 @@ export function ListingPage() {
 						</div>
 					</aside>
 				</section>
-			) : (error || !auction) ? (
+			) : error || !auction ? (
 				<section className="status-page">
 					<p className="error-text page-status">{error || 'Listing not found.'}</p>
 				</section>
@@ -535,7 +562,13 @@ export function ListingPage() {
 
 							<div className="listing-price-block">
 								<span className="listing-price-label">
-									{isSold ? 'Sold for' : isUpcoming ? 'Starting bid' : isExpired ? 'Final bid (no winner)' : 'Highest bid'}
+									{isSold
+										? 'Sold for'
+										: isUpcoming
+											? 'Starting bid'
+											: isExpired
+												? 'Final bid (no winner)'
+												: 'Highest bid'}
 								</span>
 								<span className="listing-price-value">
 									{formatPrice(displayPrice, currency)}
@@ -564,7 +597,11 @@ export function ListingPage() {
 							<div className="listing-timing">
 								<div className="listing-timing-row">
 									<span>{isUpcoming ? 'Starts' : 'Started'}</span>
-									<span>{isUpcoming ? formatTimeRemaining(startTime, now) : formatDateTime(startTime)}</span>
+									<span>
+										{isUpcoming
+											? formatTimeRemaining(startTime, now)
+											: formatDateTime(startTime)}
+									</span>
 								</div>
 								<div className="listing-timing-row">
 									<span>{isSold || isExpired ? 'Ended' : 'Ends'}</span>
@@ -579,11 +616,11 @@ export function ListingPage() {
 								className="submit"
 								disabled={isSold || isExpired}
 								onClick={isLive || isUpcoming ? openPlaceBidModal : undefined}
-							>   
+							>
 								{isLive
 									? 'Place a bid'
 									: isUpcoming
-										? 'View bid details' 
+										? 'View bid details'
 										: isExpired
 											? 'Auction expired'
 											: 'Bidding closed'}
@@ -661,9 +698,7 @@ export function ListingPage() {
 						className={`bids-overlay ${placeBidModalOpen ? 'active' : ''}`}
 						onClick={() => setPlaceBidModalOpen(false)}
 					></div>
-					<div
-						className={`bids-modal ${placeBidModalOpen ? 'active' : ''}`}
-					>
+					<div className={`bids-modal ${placeBidModalOpen ? 'active' : ''}`}>
 						<button
 							className="bids-close-btn"
 							aria-label="Close"
@@ -686,10 +721,11 @@ export function ListingPage() {
 										<span>{formatTimeRemaining(endTime, now)}</span>
 									</>
 								)}
-								
 							</div>
 							<div className="bid-info-column">
-								<span className="column-title">{isUpcoming ? 'Starting' : 'Highest'} bid</span>
+								<span className="column-title">
+									{isUpcoming ? 'Starting' : 'Highest'} bid
+								</span>
 								<span>{formatPrice(displayPrice, currency)}</span>
 							</div>
 							{user && !isUpcoming && (
@@ -720,13 +756,13 @@ export function ListingPage() {
 									<span className="input-wrap">
 										<i className="fa-solid fa-coins input-icon" aria-hidden="true"></i>
 										<input
-										type="text"
-										inputMode="decimal"
-										value={displayValue}
-										onChange={handleBidAmountChange}
-										onFocus={() => setBidFocused(true)}
-										onBlur={() => setBidFocused(false)}
-										disabled={bidSubmitting}
+											type="text"
+											inputMode="decimal"
+											value={displayValue}
+											onChange={handleBidAmountChange}
+											onFocus={() => setBidFocused(true)}
+											onBlur={() => setBidFocused(false)}
+											disabled={bidSubmitting}
 										/>
 									</span>
 								</label>
@@ -738,34 +774,75 @@ export function ListingPage() {
 						) : isUpcoming ? (
 							<div className="place-bid-form">
 								{!user ? (
-									<p className="listing-page-status" style={{ fontSize: 'var(--label-size) !important', textAlign: 'center', marginTop: 0 }}>
+									<p
+										className="listing-page-status"
+										style={{
+											fontSize: 'var(--label-size) !important',
+											textAlign: 'center',
+											marginTop: 0,
+										}}
+									>
 										Sign in to queue a bid.
 									</p>
 								) : preBid === undefined ? (
-									<p className="listing-page-status" style={{ fontSize: 'var(--label-size) !important', textAlign: 'center', marginTop: 0 }}>
+									<p
+										className="listing-page-status"
+										style={{
+											fontSize: 'var(--label-size) !important',
+											textAlign: 'center',
+											marginTop: 0,
+										}}
+									>
 										Checking your pre-bid…
 									</p>
 								) : preBid ? (
 									<>
-										<p className="listing-page-status" style={{ fontSize: 'var(--label-size) !important', textAlign: 'center', marginTop: 0 }}>
+										<p
+											className="listing-page-status"
+											style={{
+												fontSize: 'var(--label-size) !important',
+												textAlign: 'center',
+												marginTop: 0,
+											}}
+										>
 											You're queued to pre-bid the moment bidding opens.
 										</p>
 										{preBidError && <p className="error-text">{preBidError}</p>}
-										<button type="button" className="submit submit-danger" disabled={preBidSubmitting} onClick={handleCancelPreBid}>
+										<button
+											type="button"
+											className="submit submit-danger"
+											disabled={preBidSubmitting}
+											onClick={handleCancelPreBid}
+										>
 											{preBidSubmitting ? 'Cancelling…' : 'Cancel pre-bid'}
 										</button>
 									</>
 								) : (
 									<>
-										{preBidError && <p className="error-text" style={{ textAlign: 'center', marginTop: 0 }}>{preBidError}</p>}
-										<button type="button" className="submit" disabled={preBidSubmitting} onClick={handleQueuePreBid}>
+										{preBidError && (
+											<p
+												className="error-text"
+												style={{ textAlign: 'center', marginTop: 0 }}
+											>
+												{preBidError}
+											</p>
+										)}
+										<button
+											type="button"
+											className="submit"
+											disabled={preBidSubmitting}
+											onClick={handleQueuePreBid}
+										>
 											{preBidSubmitting ? 'Queueing…' : 'Queue starting bid'}
 										</button>
 									</>
 								)}
 							</div>
 						) : (
-							<p className="listing-page-status" style={{ fontSize: 'var(--label-size) !important' }}>
+							<p
+								className="listing-page-status"
+								style={{ fontSize: 'var(--label-size) !important' }}
+							>
 								Bidding is closed.
 							</p>
 						)}

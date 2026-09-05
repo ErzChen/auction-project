@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client';
 import '../components/auth-form.css';
 import '../themes.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
-
 function getTokenFromUrl() {
     return new URLSearchParams(window.location.search).get('token');
 }
@@ -39,7 +37,7 @@ export function ResetPasswordPage() {
         setSubmitting(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/reset-password`, {
+            const res = await fetch(`${CONFIG.API_BASE}/api/reset-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

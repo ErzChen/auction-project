@@ -1,5 +1,3 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
-
 export async function getAuctions(filters) {
 	const params = new URLSearchParams();
 
@@ -15,21 +13,21 @@ export async function getAuctions(filters) {
 	if (filters.limit) params.set('limit', filters.limit);
 	if (filters.offset) params.set('offset', filters.offset);
 
-	const res = await fetch(`${API_BASE}/api/auctions?${params.toString()}`);
+	const res = await fetch(`${CONFIG.API_BASE}/api/auctions?${params.toString()}`);
 	if (!res.ok) throw new Error('Failed to fetch auctions');
 	const data = await res.json();
 	return data.auctions;
 }
 
 export async function getBids(auctionId) {
-	const res = await fetch(`${API_BASE}/api/bids/${auctionId}`);
+	const res = await fetch(`${CONFIG.API_BASE}/api/bids/${auctionId}`);
 	if (!res.ok) throw new Error('Failed to fetch bids');
 	const data = await res.json();
 	return data.bids;
 }
 
 export async function createBid(auctionId, amount) {
-	const res = await fetch(`${API_BASE}/api/bids`, {
+	const res = await fetch(`${CONFIG.API_BASE}/api/bids`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		credentials: 'include',
@@ -41,7 +39,7 @@ export async function createBid(auctionId, amount) {
 }
 
 export async function cancelBid(bidId) {
-	const res = await fetch(`${API_BASE}/api/bids/${bidId}/cancel`, {
+	const res = await fetch(`${CONFIG.API_BASE}/api/bids/${bidId}/cancel`, {
 		method: 'PUT',
 		credentials: 'include',
 	});
@@ -51,7 +49,7 @@ export async function cancelBid(bidId) {
 }
 
 export async function getPreBid(auctionId) {
-	const res = await fetch(`${API_BASE}/api/pre-bids/${auctionId}`, { credentials: 'include' });
+	const res = await fetch(`${CONFIG.API_BASE}/api/pre-bids/${auctionId}`, { credentials: 'include' });
 	if (res.status === 401) return null;
 	if (!res.ok) throw new Error('Failed to fetch pre-bid');
 	const data = await res.json();
@@ -59,7 +57,7 @@ export async function getPreBid(auctionId) {
 }
 
 export async function createPreBid(auctionId) {
-	const res = await fetch(`${API_BASE}/api/pre-bids`, {
+	const res = await fetch(`${CONFIG.API_BASE}/api/pre-bids`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		credentials: 'include',
@@ -71,7 +69,7 @@ export async function createPreBid(auctionId) {
 }
 
 export async function cancelPreBid(preBidId) {
-	const res = await fetch(`${API_BASE}/api/pre-bids/${preBidId}/cancel`, {
+	const res = await fetch(`${CONFIG.API_BASE}/api/pre-bids/${preBidId}/cancel`, {
 		method: 'PUT',
 		credentials: 'include',
 	});

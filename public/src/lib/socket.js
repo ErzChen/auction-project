@@ -4,7 +4,7 @@ let socket = null;
 
 export function getSocket() {
     if (!socket) {
-        socket = io(import.meta.env.VITE_BACKEND_URL, {
+        socket = io(CONFIG.API_BASE, {
             withCredentials: true,
         });
     }

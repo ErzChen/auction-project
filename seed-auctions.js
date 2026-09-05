@@ -14,15 +14,15 @@ const DEFAULT_INCREMENT_RULES = JSON.stringify([
 	{ min: 10000, max: null, increment: 500 },
 ]);
 
-const NOW = new Date();
-const TODAY = new Date(
-	Date.UTC(NOW.getUTCFullYear(), NOW.getUTCMonth(), NOW.getUTCDate()),
-);
+const now = new Date();
 
-function dt(offsetDays, hh = 0, mm = 0) {
-	const d = new Date(TODAY.getTime() + offsetDays * 24 * 60 * 60 * 1000);
-	d.setUTCHours(hh, mm, 0, 0);
-	return d.toISOString();
+function dt(offsetDays = 0, offsetHours = 0, offsetMinutes = 0) {
+  const ms = now.getTime() 
+    + (offsetDays * 24 * 60 * 60 * 1000) 
+    + (offsetHours * 60 * 60 * 1000) 
+    + (offsetMinutes * 60 * 1000);
+    
+  return new Date(ms).toISOString();
 }
 
 function seedBidsForAuction(
@@ -127,11 +127,7 @@ export function seedDatabase() {
 	}
 
 	for (let i = 1; i <= 12; i++) {
-		insertUser.run(
-			`user${i}`,
-			`user${i}@example.com`,
-			`placeholder_hash_${i}`,
-		);
+		insertUser.run(`user${i}`, `user${i}@example.com`, `placeholder_hash_${i}`);
 	}
 
 	const auctions = [
@@ -573,8 +569,8 @@ export function seedDatabase() {
 			condition: 'Good',
 			location: 'Portland, OR',
 			category: 'furniture',
-			start_time: dt(-7, 8),
-			end_time: dt(1, 8),
+			start_time: dt(-7, 6),
+			end_time: dt(0, 0, 1),
 			status: 'active',
 			images: ['/img/30a.jpg', '/img/30b.jpg'],
 			is_shipping_available: false,

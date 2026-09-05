@@ -108,7 +108,7 @@ export function searchAuctions(filters = {}) {
 
 const getDueUpcomingAuctions = db.prepare(`
 	SELECT * FROM auctions
-	WHERE status = 'upcoming' AND deleted = 0 AND start_time <= datetime('now')
+	WHERE status = 'upcoming' AND deleted = 0 AND datetime(start_time) <= datetime('now')
 `);
 
 const setAuctionStatus = db.prepare(`
@@ -150,7 +150,7 @@ export function activateUpcomingAuctions() {
 
 const getDueActiveAuctions = db.prepare(`
 	SELECT * FROM auctions
-	WHERE status = 'active' AND deleted = 0 AND end_time <= datetime('now')
+	WHERE status = 'active' AND deleted = 0 AND datetime(end_time) <= datetime('now')
 `);
 
 export async function expireActiveAuctions() {

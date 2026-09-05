@@ -73,10 +73,7 @@ router.post('/api/bids', authenticate, async (req, res) => {
 		const bidId = placeBid();
 
         getIo().to(`auction:${auction_id}`).emit('new-bid', {
-            auction_id,
-            bid_id: bidId,
-            user_id,
-            amount: bidAmount,
+            bid: getBidById(bidId),
             current_price: bidAmount,
         });
 		res.status(200).json({ message: 'Bid successful', bid_id: bidId });
@@ -124,7 +121,6 @@ router.put('/api/bids/:bid_id/cancel', authenticate, async (req, res) => {
 		const newPrice = cancelAndRecalculate(); 
 
 		getIo().to(`auction:${bid.auction_id}`).emit('bid-cancelled', {
-			auction_id: bid.auction_id,
 			bid_id: Number(bid_id),
 			current_price: newPrice,
 		});

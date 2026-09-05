@@ -5,7 +5,10 @@ import { getSocket } from '../lib/socket.js';
 
 const NUM_LISTINGS = 30;
 
-export function AuctionProvider({ children, initialFilters = DEFAULT_FILTERS }) {
+export function AuctionProvider({
+	children,
+	initialFilters = DEFAULT_FILTERS,
+}) {
 	const [appliedFilters, setAppliedFilters] = useState(initialFilters);
 	const [auctions, setAuctions] = useState([]);
 	const [page, setPage] = useState(0);
@@ -75,7 +78,7 @@ export function AuctionProvider({ children, initialFilters = DEFAULT_FILTERS }) 
 	}, [page, hasMore, appliedFilters, fetchAuctions]);
 
 	useEffect(() => {
-	const socket = socketRef.current;
+		const socket = socketRef.current;
 		const currentIds = new Set(auctions.map((auction) => auction.auction_id));
 
 		for (const id of currentIds) {
@@ -91,7 +94,7 @@ export function AuctionProvider({ children, initialFilters = DEFAULT_FILTERS }) 
 				joinedRoomsRef.current.delete(id);
 			}
 		}
-	}, [auctions]);	
+	}, [auctions]);
 
 	useEffect(() => {
 		const socket = socketRef.current;
@@ -113,7 +116,13 @@ export function AuctionProvider({ children, initialFilters = DEFAULT_FILTERS }) 
 		}
 
 		function handleUpdateStatus(data) {
-			setAuctions((prev) => prev.map((auction) => auction.auction_id === data.auction_id ? { ...auction, status: data.status } : auction));
+			setAuctions((prev) =>
+				prev.map((auction) =>
+					auction.auction_id === data.auction_id
+						? { ...auction, status: data.status }
+						: auction,
+				),
+			);
 		}
 
 		socket.on('new-bid', handleNewBid);
@@ -129,7 +138,7 @@ export function AuctionProvider({ children, initialFilters = DEFAULT_FILTERS }) 
 				socket.emit('leave-auction', id);
 			}
 			joinedRoomsRef.current.clear();
-		}
+		};
 	}, []);
 
 	useEffect(() => {

@@ -39,6 +39,6 @@ if (SEED_DB) {
 	seedDatabase();
 }
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}`);
 });

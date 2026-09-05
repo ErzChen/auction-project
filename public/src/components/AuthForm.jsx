@@ -3,8 +3,6 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.js';
 import './auth-form.css';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
-
 export function AuthForm({ onForgotPassword }) {
 	const [usingSignIn, setSignIn] = useState(true);
 	const [submitting, setSubmitting] = useState(false);
@@ -34,7 +32,7 @@ export function AuthForm({ onForgotPassword }) {
         setSubmitting(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/login`, {
+            const res = await fetch(`${CONFIG.API_BASE}/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -75,7 +73,7 @@ export function AuthForm({ onForgotPassword }) {
         setSubmitting(true);
         setError(null);
         try {
-            const res = await fetch(`${API_BASE}/api/register`, {
+            const res = await fetch(`${CONFIG.API_BASE}/api/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
