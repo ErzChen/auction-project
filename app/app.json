@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "app",
+    "slug": "app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./images/favicon.ico",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#faf8f4",
+        "foregroundImage": "./images/gavel-logo.png"
+      }
+    },
+    "web": {
+      "favicon": "./images/favicon.ico"
+    }
+  }
+}
