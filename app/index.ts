@@ -1,5 +1,5 @@
 import { registerRootComponent } from 'expo';
 
-import App from './App.tsx';
+import AuthPage from './pages/AuthPage';
 
-registerRootComponent(App);
+registerRootComponent(AuthPage);

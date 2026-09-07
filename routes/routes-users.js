@@ -5,7 +5,19 @@ import crypto from 'crypto';
 import { FRONTEND_URL, resend } from '../config.js';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { deleteSession, expirePasswordReset, getPasswordResetByToken, getUserByEmail, getUserById, insertPasswordReset, insertSession, updateUserPassword } from '../middleware/users-db.js';
+import {
+	deleteSession,
+	expirePasswordReset,
+	getPasswordResetByToken,
+	getUserByEmail,
+	getUserByEmailOrUsername,
+	getUserById,
+	getUserByUsername,
+	insertPasswordReset,
+	insertSession,
+	insertUser,
+	updateUserPassword,
+} from '../middleware/users-db.js';
 import { authenticate } from '../middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,21 +27,24 @@ const router = express.Router();
 
 function validatePassword(password) {
 	if (password.length < 8) return 'Password must be atleast 8 characters';
-	if (password.length > 128) return 'Password cannot be greater than 128 characters';
-	if (password.toLowerCase() == password) return 'Password must contain a capital letter';
-	if (password.toUpperCase() === password) return 'Password must contain a lowercase letter';
+	if (password.length > 128)
+		return 'Password cannot be greater than 128 characters';
+	if (password.toLowerCase() == password)
+		return 'Password must contain a capital letter';
+	if (password.toUpperCase() === password)
+		return 'Password must contain a lowercase letter';
 	if (!/\d/.test(password)) return 'Password must contain a number';
 	if (!/[!@#$%^&*(),.?":{}|<>_+\-=\[\]\\';`/~]/.test(password))
 		return 'Password must contain a special character';
 	if (/\s/.test(password)) return 'Password cannot contain spaces';
-	return null
+	return null;
 }
 
 function createLoginSession(db, res, userId, rememberMe = false) {
 	const sessionId = crypto.randomBytes(32).toString('hex');
 	let age = 1000 * 60 * 60 * 24;
-	age = rememberMe ? age * 30 : age
-	const expiresAt = Date.now() + (age);
+	age = rememberMe ? age * 30 : age;
+	const expiresAt = Date.now() + age;
 
 	insertSession.run(sessionId, userId, expiresAt);
 
@@ -52,9 +67,7 @@ router.post('/api/register', async (req, res) => {
 		email = email.toLowerCase().trim();
 		username = username.toLowerCase().trim();
 
-		const existing = db
-			.prepare(`SELECT user_id FROM users WHERE email = ? OR username = ?`)
-			.get(email, username);
+		const existing = getUserByEmailOrUsername.get(email, username);
 		if (existing)
 			return res.status(409).json({ message: 'Username or email already taken' });
 
@@ -63,11 +76,7 @@ router.post('/api/register', async (req, res) => {
 
 		const password_hash = await bcrypt.hash(password, 12);
 
-		const info = db
-			.prepare(
-				'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
-			)
-			.run(username, email, password_hash);
+		const info = insertUser.run(username, email, password_hash);
 
 		createLoginSession(db, res, info.lastInsertRowid);
 
@@ -89,9 +98,7 @@ router.post('/api/login', async (req, res) => {
 
 		username = username.toLowerCase().trim();
 
-		const userRow = db
-			.prepare(`SELECT * FROM users WHERE username = ?`)
-			.get(username);
+		const userRow = getUserByUsername.get(username);
 		if (!userRow)
 			return res.status(401).json({ message: 'Invalid username or password' });
 
@@ -101,13 +108,11 @@ router.post('/api/login', async (req, res) => {
 
 		createLoginSession(db, res, userRow.user_id, rememberMe);
 
-		res
-			.status(200)
-			.json({
-				id: userRow.user_id,
-				username: userRow.username,
-				email: userRow.email,
-			});
+		res.status(200).json({
+			id: userRow.user_id,
+			username: userRow.username,
+			email: userRow.email,
+		});
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ message: 'Something went wrong' });
@@ -136,7 +141,8 @@ router.post('/api/logout', async (req, res) => {
 router.post('/api/forgot-password', async (req, res) => {
 	try {
 		let { email } = req.body;
-		if (!email) return res.status(400).json({ message: 'Please enter your email' });
+		if (!email)
+			return res.status(400).json({ message: 'Please enter your email' });
 
 		email = email.toLowerCase().trim();
 
@@ -162,7 +168,7 @@ router.post('/api/forgot-password', async (req, res) => {
 			});
 		}
 
-		res.status(200).json({ message: "Reset link sent to email provided." });
+		res.status(200).json({ message: 'Reset link sent to email provided.' });
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ message: 'Something went wrong' });
@@ -173,8 +179,10 @@ router.post('/api/reset-password', async (req, res) => {
 	try {
 		const { token, password } = req.body;
 
-		if (!password) return res.status(400).json({ message: 'Please enter a new password' })
-		if (!token) return res.status(400).json({ message: 'Invalid or expired reset link' })
+		if (!password)
+			return res.status(400).json({ message: 'Please enter a new password' });
+		if (!token)
+			return res.status(400).json({ message: 'Invalid or expired reset link' });
 
 		const passwordError = validatePassword(password);
 		if (passwordError) return res.status(422).json({ message: passwordError });
@@ -198,23 +206,29 @@ router.post('/api/reset-password', async (req, res) => {
 });
 
 router.get('/reset-password', (req, res) => {
-	res.sendFile(path.join(__dirname, '../public/pages/reset-password.html'), (err) => {
-		if (err) {
-			console.error(err);
-			res.status(500).send("Something went wrong");
-		}
-	});
+	res.sendFile(
+		path.join(__dirname, '../public/pages/reset-password.html'),
+		(err) => {
+			if (err) {
+				console.error(err);
+				res.status(500).send('Something went wrong');
+			}
+		},
+	);
 });
 
 router.get('/api/user/:user_id', async (req, res) => {
 	try {
-		if (!req.params.user_id) return res.status(400).json({ message: 'Invalid user id' });
+		if (!req.params.user_id)
+			return res.status(400).json({ message: 'Invalid user id' });
 
 		const row = getUserById.get(req.params.user_id);
 
 		if (!row) return res.status(404).json({ message: 'User not found' });
 
-		res.status(200).json({ username: row.username, email: row.email, id: row.user_id });
+		res
+			.status(200)
+			.json({ id: row.user_id, username: row.username, email: row.email });
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ message: 'Something went wrong' });
@@ -225,7 +239,9 @@ router.get('/api/me', authenticate, async (req, res) => {
 	try {
 		const row = getUserById.get(req.userId);
 		if (!row) return res.status(404).json({ message: 'User not found' });
-		res.status(200).json({ id: req.userId, username: row.username, email: row.email });
+		res
+			.status(200)
+			.json({ id: req.userId, username: row.username, email: row.email });
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ message: 'Something went wrong' });

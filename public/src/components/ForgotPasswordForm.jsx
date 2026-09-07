@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './auth-form.css';
+import '../styles/auth-form.css';
 
 const API_BASE = CONFIG.API_BASE || 'http://localhost:3000';
 

@@ -6,6 +6,7 @@ export let DB_DIR = process.env.DB_DIR;
 export let SEED_DB = process.env.SEED_DB;
 export let PORT = process.env.PORT;
 export let FRONTEND_URL = process.env.FRONTEND_URL;
+export let APPLICATION_SECRET_KEY = process.env.APPLICATION_SECRET_KEY;
 
 if (!DB_DIR) {
 	DB_DIR = './database';
@@ -31,6 +32,11 @@ if (!PORT) {
 if (!FRONTEND_URL) {
 	FRONTEND_URL = 'http://localhost:5173';
 	console.error('FRONTEND_URL environment variable is not set');
+}
+
+if (!APPLICATION_SECRET_KEY) {
+	APPLICATION_SECRET_KEY = 'WoweeSecretKey';
+	console.error('APPLICATION_SECRET_KEY environment variable is not set');
 }
 
 if (!fs.existsSync(DB_DIR)) {

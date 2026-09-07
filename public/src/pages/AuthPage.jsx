@@ -2,8 +2,8 @@ import { StrictMode, useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import gavelLogo from '../../images/gavel-logo.png';
-import './auth-page.css';
-import '../themes.css';
+import '../styles/auth-page.css';
+import '../styles/themes.css';
 import { getAuctions } from '../lib/auctionActions.js';
 import { AuthForm } from '../components/AuthForm.jsx';
 import { ForgotPasswordForm } from '../components/ForgotPasswordForm.jsx';
@@ -45,7 +45,7 @@ const FALLBACK_LISTINGS = [
 
 export function AuthPage() {
 	const [listings, setListings] = useState(FALLBACK_LISTINGS);
-	const [view, setView] = useState('auth'); 
+	const [view, setView] = useState('auth');
 
 	useEffect(() => {
 		let cancelled = false;
@@ -58,7 +58,9 @@ export function AuthPage() {
 					return;
 				}
 				setListings(
-					auctions.map((a) => `LISTING ${a.auction_id} - ${a.title} - SOLD`),
+					auctions.map(
+						(auction) => `LISTING ${auction.auction_id} - ${auction.title} - SOLD`,
+					),
 				);
 			})
 			.catch((err) => {
@@ -73,44 +75,43 @@ export function AuthPage() {
 
 	const { loading } = useAuth();
 
-	if (loading) return (
-        <div
-			className='status-page'
-        >
-            <p className="page-status">Loading...</p>
-        </div>
-    );
+	if (loading)
+		return (
+			<div className="status-page">
+				<p className="page-status">Loading...</p>
+			</div>
+		);
 
 	return (
-        <section className="auth-page">
-            <div className="auth-brand-panel">
-                <div className="auth-branding">
-                    <img src={gavelLogo} alt="Gavel logo" className="auth-brand-logo" />
-                    <span>Erz's Auction</span>
-                </div>
-                <div className="auth-listing-display" aria-hidden="true">
-                    <ul className="auth-listing">
-                        {[...listings, ...listings].map((listing, i) => (
-                            <li key={i}>{listing}</li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-            {view === 'auth' ? (
-                <AuthForm onForgotPassword={() => setView('forgot')} />
-            ) : (
-                <ForgotPasswordForm onBackToSignIn={() => setView('auth')} />
-            )}
-        </section>
+		<section className="auth-page">
+			<div className="auth-brand-panel">
+				<div className="auth-branding">
+					<img src={gavelLogo} alt="Gavel logo" className="auth-brand-logo" />
+					<span>Erz's Auction</span>
+				</div>
+				<div className="auth-listing-display" aria-hidden="true">
+					<ul className="auth-listing">
+						{[...listings, ...listings].map((listing, i) => (
+							<li key={i}>{listing}</li>
+						))}
+					</ul>
+				</div>
+			</div>
+			{view === 'auth' ? (
+				<AuthForm onForgotPassword={() => setView('forgot')} />
+			) : (
+				<ForgotPasswordForm onBackToSignIn={() => setView('auth')} />
+			)}
+		</section>
 	);
 }
 
 createRoot(document.getElementById('root')).render(
 	<StrictMode>
-        <BrowserRouter>
-            <AuthProvider>
-                <AuthPage />
-            </AuthProvider>
-        </BrowserRouter>
+		<BrowserRouter>
+			<AuthProvider>
+				<AuthPage />
+			</AuthProvider>
+		</BrowserRouter>
 	</StrictMode>,
 );

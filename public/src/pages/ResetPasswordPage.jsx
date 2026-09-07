@@ -1,7 +1,7 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import '../components/auth-form.css';
-import '../themes.css';
+import '../styles/auth-form.css';
+import '../styles/themes.css';
 
 function getTokenFromUrl() {
     return new URLSearchParams(window.location.search).get('token');

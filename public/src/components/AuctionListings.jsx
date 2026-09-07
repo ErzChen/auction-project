@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuctionContext } from '../context/AuctionContext.js';
 import { getUser } from '../lib/userActions.js';
 import { formatPrice, formatDate } from '../lib/library.js';
-import './auction-listings.css';
+import '../styles/auction-listings.css';
 
 function getFirstImage(imagePathsJson) {
 	try {

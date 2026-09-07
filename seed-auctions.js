@@ -1,11 +1,7 @@
-import { insertAuction } from './middleware/auctions-db.js';
+import { insertAuction, setAuctionWinner } from './middleware/auctions-db.js';
 import { insertUser } from './middleware/users-db.js';
 import db from './middleware/db.js';
 import { incrementFor, insertBid } from './middleware/bids-db.js';
-
-const setAuctionWinner = db.prepare(`
-  UPDATE auctions SET winning_user_id = ?, winning_bid_id = ? WHERE auction_id = ?
-`);
 
 const DEFAULT_INCREMENT_RULES = JSON.stringify([
 	{ min: 0, max: 500, increment: 25 },

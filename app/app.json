@@ -4,7 +4,7 @@
     "slug": "app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./images/favicon.ico",
+    "icon": "./assets/images/favicon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true
@@ -12,11 +12,11 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#faf8f4",
-        "foregroundImage": "./images/gavel-logo.png"
+        "foregroundImage": "./assets/images/gavel-logo.png"
       }
     },
     "web": {
-      "favicon": "./images/favicon.ico"
+      "favicon": "./assets/images/favicon.png"
     }
   }
 }

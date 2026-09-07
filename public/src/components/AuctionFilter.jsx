@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './auction-filter.css';
+import '../styles/auction-filter.css';
 import { DEFAULT_FILTERS, useAuctionContext } from '../context/AuctionContext.js';
 
 const CATEGORIES = [

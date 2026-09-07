@@ -238,7 +238,6 @@ body {
 
 .link {
 	all: unset;
-	margin-top: 10px;
 	font-size: var(--label-size);
 	font-weight: 700;
 	color: var(--init);

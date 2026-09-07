@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.js';
-import './auth-form.css';
+import '../styles/auth-form.css';
 
 export function AuthForm({ onForgotPassword }) {
 	const [usingSignIn, setSignIn] = useState(true);

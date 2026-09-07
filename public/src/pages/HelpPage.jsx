@@ -1,8 +1,8 @@
 import { StrictMode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
-import './help-page.css';
-import '../themes.css';
+import '../styles/help-page.css';
+import '../styles/themes.css';
 import TopBar from '../components/TopBar';
 
 export function HelpPage() {

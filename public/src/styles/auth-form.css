@@ -101,8 +101,8 @@
 }
 
 .auth-switch-line {
-	margin: 20px 0 0;
+	margin: 10px 0 0 !important;
 	text-align: center;
-	font-size: var(--label-size);
-	color: var(--navy-text-muted);
+	font-size: var(--label-size) !important;
+color: var(--navy-text-muted) !important;
 }

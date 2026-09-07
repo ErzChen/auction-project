@@ -2,7 +2,7 @@ export async function getAuctions(filters) {
 	const params = new URLSearchParams();
 
 	if (filters.statuses?.length) {
-		filters.statuses.forEach((s) => params.append('statuses', s));
+		filters.statuses.forEach((status) => params.append('statuses', status));
 	}
 	if (filters.category) params.set('category', filters.category);
 	if (filters.keyword) params.set('keyword', filters.keyword);

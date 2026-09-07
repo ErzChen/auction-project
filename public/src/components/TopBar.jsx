@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gavelLogo from '../../images/gavel-logo.png';
 import { useAuth } from '../context/AuthContext.js';
-import './top-bar.css';
+import '../styles/top-bar.css';
 
 function TopBar() {
 	const auth = useAuth();

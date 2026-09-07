@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import './main-page.css';
-import '../themes.css';
+import '../styles/main-page.css';
+import '../styles/themes.css';
 import TopBar from '../components/TopBar.jsx';
 import { AuctionProvider } from '../context/AuctionProvider.jsx';
 import { AuthProvider } from '../context/AuthProvider.jsx';
