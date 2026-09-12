@@ -1,26 +1,44 @@
-import { APPLICATION_SECRET_KEY } from '../config.js';
+import {
+	APPLICATION_SECRET_KEY,
+	FRONTEND_URL,
+	JWT_SECRET_KEY,
+} from '../config.js';
 import db from './db.js';
 import { getSession } from './users-db.js';
+import jwt from 'jsonwebtoken';
 
 export function authenticate(req, res, next) {
-	const sessionId = req.cookies?.sessionId;
-	if (!sessionId) return res.status(401).json({ message: 'Not authenticated' });
+	const authHeader = req.headers.authorization;
+	const bearerToken = authHeader && authHeader.split(' ')[1];
+	const token = bearerToken || req.cookies?.sessionId;
 
-	const session = getSession.get(sessionId);
+	if (!token) return res.status(401).json({ message: 'Not authenticated' });
 
-	if (!session || session.expires_at < Date.now())
-		return res.status(401).json({ message: 'Session expired' });
+	jwt.verify(token, JWT_SECRET_KEY, (err, decodedPayload) => {
+		if (err) return res.status(403).json({ message: 'Invalid or expired token' });
 
-	req.userId = session.user_id;
-	next();
+		const { sessionId } = decodedPayload;
+
+		if (!sessionId)
+			return res.status(401).json({ message: 'Invalid session structure' });
+
+		const session = getSession.get(sessionId);
+
+		if (!session || session.expires_at < Date.now())
+			return res.status(401).json({ message: 'Session expired' });
+
+		req.userId = session.user_id;
+
+		next();
+	});
 }
 
 export function verifyApplication(req, res, next) {
+	if (req.headers.origin == FRONTEND_URL) return next();
+
 	const token = req.header('X-Auction-Application-Key');
 
-	if (token == APPLICATION_SECRET_KEY) {
-		return next();
-	}
+	if (token == APPLICATION_SECRET_KEY) return next();
 
 	return res.status(401).json({ message: 'Unauthorized: Access Denied.' });
 }

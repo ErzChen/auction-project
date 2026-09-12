@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import db from '../middleware/db.js';
 import crypto from 'crypto';
-import { FRONTEND_URL, resend } from '../config.js';
+import { FRONTEND_URL, JWT_SECRET_KEY, resend } from '../config.js';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import {
@@ -19,6 +19,7 @@ import {
 	updateUserPassword,
 } from '../middleware/users-db.js';
 import { authenticate } from '../middleware/auth.js';
+import jwt from 'jsonwebtoken';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,20 +41,28 @@ function validatePassword(password) {
 	return null;
 }
 
+function createJwtToken(sessionId, rememberMe = false) {
+	const expiresIn = rememberMe ? '30d' : '24h';
+	return jwt.sign({ sessionId }, JWT_SECRET_KEY, { expiresIn });
+}
+
 function createLoginSession(db, res, userId, rememberMe = false) {
 	const sessionId = crypto.randomBytes(32).toString('hex');
-	let age = 1000 * 60 * 60 * 24;
-	age = rememberMe ? age * 30 : age;
+	const age = rememberMe ? 1000 * 60 * 60 * 24 * 30 : 1000 * 60 * 60 * 24;
 	const expiresAt = Date.now() + age;
 
 	insertSession.run(sessionId, userId, expiresAt);
 
-	res.cookie('sessionId', sessionId, {
+	const token = createJwtToken(sessionId, rememberMe);
+
+	res.cookie('sessionId', token, {
 		httpOnly: true,
 		secure: true,
 		sameSite: 'lax',
 		maxAge: age,
 	});
+
+	return token;
 }
 
 router.post('/api/register', async (req, res) => {
@@ -75,13 +84,11 @@ router.post('/api/register', async (req, res) => {
 		if (passwordErr) return res.status(422).json({ message: passwordErr });
 
 		const password_hash = await bcrypt.hash(password, 12);
-
 		const info = insertUser.run(username, email, password_hash);
-
-		createLoginSession(db, res, info.lastInsertRowid);
-
+		const token = createLoginSession(db, res, info.lastInsertRowid);
 		const user = { id: info.lastInsertRowid, username, email };
-		res.status(201).json(user);
+
+		res.status(201).json({ user, token });
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ message: 'Something went wrong' });
@@ -106,13 +113,10 @@ router.post('/api/login', async (req, res) => {
 		if (!valid)
 			return res.status(401).json({ message: 'Invalid username or password' });
 
-		createLoginSession(db, res, userRow.user_id, rememberMe);
+		const token = createLoginSession(db, res, userRow.user_id, rememberMe);
+		const user = { id: userRow.user_id, username: userRow.username, email: userRow.email };
 
-		res.status(200).json({
-			id: userRow.user_id,
-			username: userRow.username,
-			email: userRow.email,
-		});
+		res.status(200).json({ user, token });
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ message: 'Something went wrong' });
@@ -121,9 +125,18 @@ router.post('/api/login', async (req, res) => {
 
 router.post('/api/logout', async (req, res) => {
 	try {
-		const sessionId = req.cookies?.sessionId;
+		const authHeader = req.headers.authorization;
+		const bearerToken = authHeader && authHeader.split(' ')[1];
+		const cookieToken = req.cookies?.sessionId;
+		const token = bearerToken || cookieToken;
 
-		if (sessionId) deleteSession.run(sessionId);
+		if (token) {
+			jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
+				if (!err && decoded?.sessionId) {
+					deleteSession.run(decoded.sessionId);
+				}
+			});
+		}
 
 		res.clearCookie('sessionId', {
 			httpOnly: true,

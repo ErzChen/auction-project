@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { getAuctions } from '../lib/auctionActions.js';
 import { AuctionContext, DEFAULT_FILTERS } from './AuctionContext.js';
 import { getSocket } from '../lib/socket.js';
+import { useAuthContext } from './AuthContext.js';
 
-const NUM_LISTINGS = 30;
+const num_listings = 30;
 
 export function AuctionProvider({
 	children,
@@ -16,6 +17,7 @@ export function AuctionProvider({
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
+	const { id: userId } = useAuthContext().user;
 	const socketRef = useRef(null);
 	if (socketRef.current === null) socketRef.current = getSocket();
 	const joinedRoomsRef = useRef(new Set());
@@ -26,14 +28,14 @@ export function AuctionProvider({
 
 		getAuctions({
 			...filters,
-			limit: NUM_LISTINGS + 1,
-			offset: pageNum * NUM_LISTINGS,
+			limit: num_listings + 1,
+			offset: pageNum * num_listings,
 		})
 			.then((results) => {
 				const list = results || [];
-				const more = list.length === NUM_LISTINGS + 1;
-				setHasMore(more);
-				setAuctions(more ? list.slice(0, NUM_LISTINGS) : list);
+				const hasMore = list.length === num_listings + 1;
+				setHasMore(hasMore);
+				setAuctions(hasMore ? list.slice(0, num_listings) : list);
 			})
 			.catch((err) => {
 				console.error('Failed to load auctions:', err);
@@ -83,7 +85,7 @@ export function AuctionProvider({
 
 		for (const id of currentIds) {
 			if (!joinedRoomsRef.current.has(id)) {
-				socket.emit('join-auction', id);
+				socket.emit('join-auction', id, userId);
 				joinedRoomsRef.current.add(id);
 			}
 		}
@@ -94,7 +96,7 @@ export function AuctionProvider({
 				joinedRoomsRef.current.delete(id);
 			}
 		}
-	}, [auctions]);
+	}, [auctions, userId]);
 
 	useEffect(() => {
 		const socket = socketRef.current;
@@ -153,7 +155,7 @@ export function AuctionProvider({
 			error,
 			page,
 			hasMore,
-			pageSize: NUM_LISTINGS,
+			pageSize: num_listings,
 			appliedFilters,
 			applyFilters,
 			resetFilters,

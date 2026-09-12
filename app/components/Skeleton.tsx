@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -7,17 +7,13 @@ import Animated, {
   interpolateColor,
   Easing,
 } from "react-native-reanimated";
-import { StyleSheet, ViewStyle } from "react-native";
+import { StyleSheet } from "react-native";
 import { colors } from "../constants/theme";
 
 const BASE_COLOR = colors.surface;
 const HIGHLIGHT_COLOR = "#f1ede3";
 
-interface SkeletonProps {
-  style?: ViewStyle | ViewStyle[];
-}
-
-export function Skeleton({ style }: SkeletonProps) {
+export function Skeleton({ style }) {
   const progress = useSharedValue(0);
 
   useEffect(() => {

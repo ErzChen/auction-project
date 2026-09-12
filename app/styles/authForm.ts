@@ -23,6 +23,7 @@ export const authFormStyles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     alignItems: 'center',
+    cursor: 'pointer',
   },
   tabText: {
     fontWeight: '900',
@@ -62,41 +63,6 @@ export const authFormStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 18,
-  },
-  checkbox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  checkboxText: {
-    fontSize: fontSizes.label,
-    color: colors.navyTextBody,
-  },
-  checkboxBox: {
-	marginLeft: 2,
-    width: 13,
-    height: 13,
-    borderRadius: 3,
-    borderWidth: 1,
-    borderColor: colors.navyTextMuted,
-  },
-  checkboxBoxHover: {
-    borderColor: colors.initHover,
-  },
-  checkboxBoxActive: {
-    borderColor: colors.initActive,
-  },
-  checkboxBoxChecked: {
-    backgroundColor: colors.init,
-    borderColor: colors.init,
-  },
-  checkboxBoxCheckedHover: {
-    backgroundColor: colors.initHover,
-    borderColor: colors.initHover,
-  },
-  checkboxBoxCheckedActive: {
-    backgroundColor: colors.initActive,
-    borderColor: colors.initActive,
   },
   switchLine: {
     marginTop: 10,

@@ -3,6 +3,8 @@ import { Dispatch, SetStateAction } from "react";
 export type AuthContextType = {
     user: User | null;
     setUser: Dispatch<SetStateAction<User | null>>;
+    token: string;
+    saveSession: (user, token) => Promise<void>;
     loading: boolean;
     logout: () => Promise<void>;
 }

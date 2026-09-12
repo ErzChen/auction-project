@@ -5,6 +5,7 @@ import { FRONTEND_URL, resend } from '../config.js';
 import { getUserById } from './users-db.js';
 import { getIo } from './socket.js';
 
+
 export const insertAuction = db.prepare(`
 	INSERT INTO auctions (
 		user_id, starting_price, current_price, bid_increment_rules, currency,
@@ -199,3 +200,12 @@ export async function expireActiveAuctions() {
 		}
 	}
 }
+
+export const insertView = db.prepare(`
+    INSERT OR IGNORE INTO auction_views (auction_id, viewer_key)
+    VALUES (?, ?)
+`);
+
+export const getViewCount = db.prepare(
+	`SELECT COUNT(*) FROM auction_views WHERE auction_id = ?`,
+);

@@ -31,6 +31,10 @@ function AuctionCard({ auction }) {
 
 	const [username, setUsername] = useState(null);
 	const [imgError, setImgError] = useState(false);
+	const imageUrl = getFirstImage(imagePaths);
+	const isSold = status === 'sold';
+	const isUpcoming = status === 'upcoming';
+	const isExpired = status === 'expired';
 
 	useEffect(() => {
 		let cancelled = false;
@@ -43,11 +47,6 @@ function AuctionCard({ auction }) {
 			cancelled = true;
 		};
 	}, [userId]);
-
-	const imageUrl = getFirstImage(imagePaths);
-	const isSold = status === 'sold';
-	const isUpcoming = status === 'upcoming';
-	const isExpired = status === 'expired';
 
 	return (
 		<article className="listing-card">

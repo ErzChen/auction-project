@@ -7,6 +7,7 @@ export let SEED_DB = process.env.SEED_DB;
 export let PORT = process.env.PORT;
 export let FRONTEND_URL = process.env.FRONTEND_URL;
 export let APPLICATION_SECRET_KEY = process.env.APPLICATION_SECRET_KEY;
+export let JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 if (!DB_DIR) {
 	DB_DIR = './database';
@@ -37,6 +38,11 @@ if (!FRONTEND_URL) {
 if (!APPLICATION_SECRET_KEY) {
 	APPLICATION_SECRET_KEY = 'WoweeSecretKey';
 	console.error('APPLICATION_SECRET_KEY environment variable is not set');
+}
+
+if (!JWT_SECRET_KEY) {
+	JWT_SECRET_KEY = 'generatedRandomHexString';
+	console.error('JWT_SECRET_KEY environment variable is not set');
 }
 
 if (!fs.existsSync(DB_DIR)) {

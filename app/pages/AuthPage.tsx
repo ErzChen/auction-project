@@ -1,4 +1,12 @@
-import { ActivityIndicator, Animated, Easing, Image, LayoutChangeEvent, Platform, View } from 'react-native';
+import {
+	ActivityIndicator,
+	Animated,
+	Easing,
+	Image,
+	LayoutChangeEvent,
+	Platform,
+	View,
+} from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -130,7 +138,9 @@ export default function AuthPage() {
 						accessibilityLabel="Gavel logo"
 						style={styles.brandLogo}
 					/>
-					<AppText bold style={styles.brandingText}>Erz's Auction</AppText>
+					<AppText bold style={styles.brandingText}>
+						Erz's Auction
+					</AppText>
 				</View>
 				<View style={styles.listingDisplay}>
 					{Platform.OS === 'web' ? (
@@ -138,13 +148,20 @@ export default function AuthPage() {
 							style={{
 								flex: 1,
 								// @ts-ignore
-								maskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)',
-								WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)',
+								maskImage:
+									'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)',
+								WebkitMaskImage:
+									'linear-gradient(to bottom, transparent, black 12%, black 88%, transparent)',
 							}}
 						>
-							<Animated.View style={{ transform: [{ translateY }] }} onLayout={handleLayout}>
+							<Animated.View
+								style={{ transform: [{ translateY }] }}
+								onLayout={handleLayout}
+							>
 								{[...listings, ...listings].map((listing, i) => (
-									<AppText key={i} style={styles.listingRowItem}>{listing}</AppText>
+									<AppText key={i} style={styles.listingRowItem}>
+										{listing}
+									</AppText>
 								))}
 							</Animated.View>
 						</View>

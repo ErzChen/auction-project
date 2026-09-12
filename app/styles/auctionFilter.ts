@@ -2,10 +2,6 @@ import { StyleSheet } from 'react-native';
 import { colors, fontSizes, radius, vh } from '../constants/theme';
 
 export const auctionFilterStyles = StyleSheet.create({
-  // `position: sticky` has no RN equivalent for a plain View — if this
-  // sidebar needs to stay in view while a sibling list scrolls, that's
-  // normally solved with layout (two independent scroll areas) rather
-  // than a sticky style.
   section: {
     top: vh(10),
     alignItems: 'center',
@@ -58,7 +54,6 @@ export const auctionFilterStyles = StyleSheet.create({
     fontWeight: '700',
     color: colors.navyTextMuted,
   },
-  // was `.filter-reset-btn:hover { color: urgent; text-decoration: underline }`
   resetBtnTextPressed: {
     color: colors.urgent,
     textDecorationLine: 'underline',

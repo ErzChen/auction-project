@@ -73,7 +73,7 @@ router.post('/api/bids', authenticate, async (req, res) => {
 		const bidId = placeBid();
 
         getIo().to(`auction:${auction_id}`).emit('new-bid', {
-            bid: getBidById(bidId),
+            bid: getBidById.get(bidId),
             current_price: bidAmount,
         });
 		res.status(200).json({ message: 'Bid successful', bid_id: bidId });

@@ -98,6 +98,16 @@ db.exec(`
 `);
 
 db.exec(`
+    CREATE TABLE IF NOT EXISTS auction_views (
+        auction_id INTEGER NOT NULL,
+        viewer_key TEXT NOT NULL,
+
+        PRIMARY KEY (auction_id, viewer_key),
+        FOREIGN KEY (auction_id) REFERENCES auctions(auction_id)
+    );
+`);
+
+db.exec(`
     CREATE TABLE IF NOT EXISTS sessions (
         session_id TEXT PRIMARY KEY,
         user_id INTEGER NOT NULL REFERENCES users(user_id),

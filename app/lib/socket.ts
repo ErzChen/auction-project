@@ -4,7 +4,7 @@ let socket = null;
 
 export function getSocket() {
 	if (!socket) {
-		socket = io(CONFIG.API_BASE);
+		socket = io(process.env.EXPO_PUBLIC_API_BASE);
 	}
 	return socket;
 }

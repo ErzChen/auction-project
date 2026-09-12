@@ -55,11 +55,3 @@ export const radius = 6;
 const { width, height} = Dimensions.get('window');
 export const vw = (v: number) => (width * v) / 100;
 export const vh = (v: number) => (height * v) / 100;
-
-export const shadow = (opacity = 0.12, radiusPx = 10, elevation = 4) => ({
-  shadowColor: '#0c2c4a',
-  shadowOpacity: opacity,
-  shadowRadius: radiusPx,
-  shadowOffset: { width: 0, height: 4 },
-  elevation,
-});

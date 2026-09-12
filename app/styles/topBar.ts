@@ -1,11 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSizes, radius, shadow, vh, vw } from '../constants/theme';
+import { colors, fontSizes, radius, vh, vw } from '../constants/theme';
 
-// Note: `position: 'fixed'` in the original CSS kept the bar pinned while
-// the page scrolled underneath. RN has no scrolling document — the usual
-// pattern is a header rendered above a ScrollView/FlatList (or a
-// navigation-library header), not a fixed-position element. `absolute` is
-// used here as the closest equivalent if you're laying this out by hand.
 export const topBarStyles = StyleSheet.create({
   bar: {
     position: 'absolute',
@@ -45,10 +40,6 @@ export const topBarStyles = StyleSheet.create({
     minWidth: 0,
     height: '100%',
   },
-  // The `::before` divider line and `:hover` background from the CSS
-  // version don't have a StyleSheet equivalent — render a 1px View as a
-  // sibling for the divider, and drive hover/press color from component
-  // state (Pressable's `pressed` render prop) instead.
   navButtonSpan: {
     flex: 1,
     height: '100%',
@@ -94,7 +85,11 @@ export const topBarStyles = StyleSheet.create({
     borderColor: colors.surface,
     borderRadius: radius,
     zIndex: 2,
-    ...shadow(0.18, 24, 8),
+    shadowColor: '#0c2c4a',
+    shadowOpacity: 0.18,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 8,
   },
   profileMenuItem: {
     flexDirection: 'row',

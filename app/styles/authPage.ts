@@ -7,7 +7,6 @@ export const authPageStyles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
   },
-
   brandPanel: {
     width: '38%',
     height: '100%',
@@ -16,31 +15,26 @@ export const authPageStyles = StyleSheet.create({
     justifyContent: 'space-between',
     overflow: 'hidden',
   },
-
   branding: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
   },
-
   brandingText: {
     fontWeight: '800',
     fontSize: fontSizes.title,
     color: colors.whiteTextPrimary,
   },
-
   brandLogo: {
     height: 50,
     width: 50,
     resizeMode: 'contain',
   },
-
   listingDisplay: {
     flex: 1,
     marginVertical: 40,
     overflow: 'hidden',
   },
-
   listingRowItem: {
     paddingVertical: 10,
     fontSize: fontSizes.label,

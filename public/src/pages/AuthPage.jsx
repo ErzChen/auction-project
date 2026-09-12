@@ -8,7 +8,7 @@ import { getAuctions } from '../lib/auctionActions.js';
 import { AuthForm } from '../components/AuthForm.jsx';
 import { ForgotPasswordForm } from '../components/ForgotPasswordForm.jsx';
 import { AuthProvider } from '../context/AuthProvider.jsx';
-import { useAuth } from '../context/AuthContext.js';
+import { useAuthContext } from '../context/AuthContext.js';
 
 const FALLBACK_LISTINGS = [
 	'LISTING # — Title — SOLD',
@@ -73,7 +73,7 @@ export function AuthPage() {
 		};
 	}, []);
 
-	const { loading } = useAuth();
+	const { loading } = useAuthContext();
 
 	if (loading)
 		return (

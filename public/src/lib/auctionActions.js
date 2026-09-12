@@ -48,6 +48,33 @@ export async function cancelBid(bidId) {
 	return data;
 }
 
+export function sortBids(bids) {
+	const bidders = {};
+	const activeBids = bids
+		.filter((b) => !b.is_cancelled)
+		.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+	for (const bid of activeBids) {
+		const userId = bid.user_id;
+		if (!bidders[userId]) {
+			bidders[userId] = { count: 1, highest: bid.amount, lastBidAt: bid.created_at };
+			continue;
+		}
+		const bidder = bidders[userId];
+		bidder.count += 1;
+		if (bid.amount > bidder.highest) bidder.highest = bid.amount;
+		if (new Date(bid.created_at) > new Date(bidder.lastBidAt)) bidder.lastBidAt = bid.created_at;
+	}
+
+	return Object.keys(bidders)
+		.map((userId, i) => ({
+			userId,
+			label: `Bidder ${String.fromCharCode(65 + (i % 26))}${i >= 26 ? Math.floor(i / 26) : ''}`,
+			...bidders[userId],
+		}))
+		.sort((a, b) => b.highest - a.highest);
+}
+
 export async function getPreBid(auctionId) {
 	const res = await fetch(`${CONFIG.API_BASE}/api/pre-bids/${auctionId}`, { credentials: 'include' });
 	if (res.status === 401) return null;

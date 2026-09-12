@@ -1,5 +1,4 @@
 import { registerRootComponent } from 'expo';
+import App from './App';
 
-import AuthPage from './pages/AuthPage';
-
-registerRootComponent(AuthPage);
+registerRootComponent(App);

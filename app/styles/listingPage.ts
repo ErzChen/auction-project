@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSizes, radius, shadow, vh, vw } from '../constants/theme';
+import { colors, fontSizes, radius, vh, vw } from '../constants/theme';
 
 export const listingPageStyles = StyleSheet.create({
   page: {
@@ -35,7 +35,6 @@ export const listingPageStyles = StyleSheet.create({
   galleryPlaceholderIcon: {
     fontSize: 48,
   },
-  // `overflow-x: scroll` -> a horizontal ScrollView wrapping this row
   galleryThumbRow: {
     flexDirection: 'row',
     gap: 10,
@@ -78,10 +77,6 @@ export const listingPageStyles = StyleSheet.create({
     lineHeight: 22,
     color: colors.navyTextBody,
   },
-
-  // `position: sticky` -> plain positioning; RN has no scroll-linked sticky
-  // offset for an arbitrary View outside of a ScrollView's own
-  // `stickyHeaderIndices`.
   panel: {
     flexGrow: 1,
     padding: 26,
@@ -147,9 +142,6 @@ export const listingPageStyles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-
-  // Modal — RN's built-in <Modal> component covers what `.bids-overlay` /
-  // `.bids-modal` (fixed + centered transform) were doing by hand.
   bidsOverlay: {
     flex: 1,
     backgroundColor: colors.overlayTranslucent,

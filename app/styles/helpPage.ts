@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, fontSizes, radius, shadow, vh, vw } from '../constants/theme';
+import { colors, fontSizes, radius, vh, vw } from '../constants/theme';
 
 export const helpPageStyles = StyleSheet.create({
   page: {
@@ -35,7 +35,11 @@ export const helpPageStyles = StyleSheet.create({
   searchInputWrap: {
     height: 52,
     backgroundColor: colors.bg,
-    ...shadow(0.18, 24, 6),
+    shadowColor: '#0c2c4a',
+    shadowOpacity: 0.18,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
   searchInputIcon: {
     fontSize: fontSizes.subtitle,
@@ -43,14 +47,11 @@ export const helpPageStyles = StyleSheet.create({
   searchInputText: {
     fontSize: fontSizes.subtitle,
   },
-
   sectionHeading: {
     fontSize: fontSizes.title,
     color: colors.navy,
     marginBottom: 16,
   },
-
-  // CSS grid(3 cols) -> flexWrap with a 1/3-ish basis
   categoryGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -122,12 +123,9 @@ export const helpPageStyles = StyleSheet.create({
     fontSize: fontSizes.body,
     color: colors.navyTextMuted,
   },
-
   faqList: {
     gap: 8,
   },
-  // <details>/<summary> has no RN equivalent — implement expand/collapse
-  // with component state (e.g. a Pressable header + conditional body).
   faqItem: {
     borderBottomWidth: 1,
     borderBottomColor: colors.bg,

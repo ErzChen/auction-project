@@ -59,3 +59,30 @@ export function formatTimeRemaining(endTime, now) {
 	if (minutes > 0) return `${minutes}m ${seconds}s`;
 	return `${seconds}s`;
 }
+
+export function sortBids(bids) {
+	const bidders = {};
+	const activeBids = bids
+		.filter((b) => !b.is_cancelled)
+		.sort((a, b) => new Date(a.created_at).getMilliseconds() - new Date(b.created_at).getMilliseconds());
+
+	for (const bid of activeBids) {
+		const userId = bid.user_id;
+		if (!bidders[userId]) {
+			bidders[userId] = { count: 1, highest: bid.amount, lastBidAt: bid.created_at };
+			continue;
+		}
+		const bidder = bidders[userId];
+		bidder.count += 1;
+		if (bid.amount > bidder.highest) bidder.highest = bid.amount;
+		if (new Date(bid.created_at) > new Date(bidder.lastBidAt)) bidder.lastBidAt = bid.created_at;
+	}
+
+	return Object.keys(bidders)
+		.map((userId, i) => ({
+			userId,
+			label: `Bidder ${String.fromCharCode(65 + (i % 26))}${i >= 26 ? Math.floor(i / 26) : ''}`,
+			...bidders[userId],
+		}))
+		.sort((a, b) => b.highest - a.highest);
+}

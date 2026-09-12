@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import gavelLogo from '../../images/gavel-logo.png';
-import { useAuth } from '../context/AuthContext.js';
+import { useAuthContext } from '../context/AuthContext.js';
 import '../styles/top-bar.css';
 
 function TopBar() {
-	const auth = useAuth();
+	const auth = useAuthContext();
 	const user = auth?.user;
 	const logout = auth?.logout;
 
