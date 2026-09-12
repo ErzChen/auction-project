@@ -1,13 +1,15 @@
 import { StyleSheet } from 'react-native';
 import { colors, fontSizes, radius, vh, vw } from '../constants/theme';
 
-export const topBarStyles = StyleSheet.create({
+export const auctionSearchStyles = StyleSheet.create({
   bar: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: vw(100),
     height: vh(10),
     backgroundColor: colors.navy,
@@ -20,12 +22,16 @@ export const topBarStyles = StyleSheet.create({
     marginLeft: 8,
     height: '100%',
     width: '20%',
+  },
+  brandingText: {
     fontSize: fontSizes.heading,
     color: colors.whiteTextPrimary,
     fontWeight: '800',
   },
   logo: {
     height: '100%',
+    width: vh(10),
+    aspectRatio: 1,
     resizeMode: 'contain',
   },
   nav: {

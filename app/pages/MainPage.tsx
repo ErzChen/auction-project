@@ -1,10 +1,12 @@
-import { View } from "react-native";
 import { AuctionListings } from "../components/AuctionListings";
+import { AuctionSearch } from "../components/AuctionSearch";
+import { AuctionProvider } from "../context/AuctionProvider";
 
 export default function MainPage() {
     return (
-        <View>
+        <AuctionProvider>
+            <AuctionSearch />
             <AuctionListings />
-        </View>
+        </AuctionProvider>
     );
 }

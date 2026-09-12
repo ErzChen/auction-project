@@ -19,7 +19,7 @@ export function AuctionProvider({ children }) {
     const joinedRoomsRef = useRef(new Set());
 
     const fetchAuctions = useCallback((keyword, pageNum) => {
-        setLoading(false);
+        setLoading(true);
         setError(null);
 
         getAuctions({
@@ -54,7 +54,12 @@ export function AuctionProvider({ children }) {
         const next = page + 1;
         setPage(next);
         fetchAuctions(keyword, next);
-    }, [page, keyword, fetchAuctions]);
+    }, [page, keyword, fetchAuctions, hasMore]);
+
+    useEffect(() => {
+        setPage(0);
+       fetchAuctions(keyword, page);
+    }, [keyword]);
 
     useEffect(() => {
         const socket = socketRef.current;
@@ -129,6 +134,7 @@ export function AuctionProvider({ children }) {
 			hasMore,
 			pageSize: num_listings,
 			keyword,
+            setKeyword,
 			prevPage,
 			nextPage,
 		}),

@@ -8,6 +8,7 @@ export const auctionListingsStyles = StyleSheet.create({
 		paddingHorizontal: 36,
 		paddingTop: 28,
 		paddingBottom: 48,
+		marginTop: vh(10),
 	},
 	header: {
 		flexDirection: 'row',
@@ -45,13 +46,14 @@ export const auctionListingsStyles = StyleSheet.create({
 		color: colors.navyTextMuted,
 	},
 	grid: {
+		flexGrow: 1,
 		flexDirection: 'row',
 		flexWrap: 'wrap',
 		gap: 20,
 	},
 	card: {
-		flexGrow: 1,
-		flexBasis: 240,
+		flexGrow: 0,
+		flexShrink: 1,
 		backgroundColor: colors.whiteTextPrimary,
 		borderWidth: 2,
 		borderColor: colors.surface,
@@ -74,6 +76,7 @@ export const auctionListingsStyles = StyleSheet.create({
 		color: colors.navyTextSub,
 	},
 	cardBody: {
+		flex: 1,
 		padding: 16,
 		gap: 4,
 		borderTopWidth: 1,
@@ -188,7 +191,7 @@ export const auctionListingsStyles = StyleSheet.create({
 		color: colors.navy,
 	},
 	pageNavArrowDisabled: {
-		// apply pageNavArrowIcon color override to navyTextDisabled when disabled
+		color: colors.navyTextDisabled,
 	},
 	pageNavLabel: {
 		fontSize: fontSizes.label,

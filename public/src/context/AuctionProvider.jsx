@@ -17,7 +17,7 @@ export function AuctionProvider({
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	const { id: userId } = useAuthContext().user;
+	const { user } = useAuthContext();
 	const socketRef = useRef(null);
 	if (socketRef.current === null) socketRef.current = getSocket();
 	const joinedRoomsRef = useRef(new Set());
@@ -85,7 +85,8 @@ export function AuctionProvider({
 
 		for (const id of currentIds) {
 			if (!joinedRoomsRef.current.has(id)) {
-				socket.emit('join-auction', id, userId);
+				console.log(user);
+				socket.emit('join-auction', id, 'none');
 				joinedRoomsRef.current.add(id);
 			}
 		}
@@ -96,7 +97,7 @@ export function AuctionProvider({
 				joinedRoomsRef.current.delete(id);
 			}
 		}
-	}, [auctions, userId]);
+	}, [auctions]);
 
 	useEffect(() => {
 		const socket = socketRef.current;

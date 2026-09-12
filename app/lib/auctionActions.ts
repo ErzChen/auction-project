@@ -25,3 +25,15 @@ export async function getAuctions(filters: AuctionFilter) {
 	const data = await res.json();
 	return data.auctions;
 }
+
+export async function getBids(auctionId) {
+	const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE}/api/bids/${auctionId}`, {
+		method: 'GET',
+		headers: {
+			'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY,
+		}
+	});
+	if (!res.ok) throw new Error('Failed to fetch bids');
+	const data = await res.json();
+	return data.bids;
+}

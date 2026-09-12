@@ -1,13 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { formatDate, formatPrice, formatTimeRemaining } from '../lib/library';
-import { Image, Pressable, TouchableOpacity, View } from 'react-native';
+import {
+	Dimensions,
+	FlatList,
+	Image,
+	Pressable,
+	ScrollView,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 import { auctionListingsStyles as styles } from '../styles/auctionListings';
 import { sharedStyles } from '../styles/shared';
 import { AppText } from './AppText';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useAuctionContext } from '../context/AuctionContext';
 import Animated from 'react-native-reanimated';
+import { Skeleton } from './Skeleton';
+import { getBids } from '../lib/auctionActions';
 
 function getFirstImage(imagePathsJson) {
 	try {
@@ -18,9 +28,10 @@ function getFirstImage(imagePathsJson) {
 	}
 }
 
-function AuctionCard({ auction }) {
+function AuctionCard({ auction, style }) {
 	const [imgError, setImgError] = useState(false);
 	const [now, setNow] = useState(Date.now());
+	const [bidCount, setBidCount] = useState(0);
 	const {
 		starting_price: startingPrice,
 		current_price: currentPrice,
@@ -33,17 +44,24 @@ function AuctionCard({ auction }) {
 		start_time: startDate,
 		end_time: endDate,
 		view_count: viewCount,
-		bid_count: bidCount,
 		category,
-		condition,
 		is_shipping_available: isShippingAvailable,
 	} = auction;
-	const { username } = useAuthContext().user;
 	const imageUrl = getFirstImage(imagePaths);
 	const isSold = status === 'sold';
 	const isUpcoming = status === 'upcoming';
 	const isExpired = status === 'expired';
 	const isActive = status === 'active';
+
+	useEffect(() => {
+		getBids(auction.auction_id)
+			.then((result) => {
+				setBidCount(result.length);
+			})
+			.catch((err) => {
+				console.log('Failed to fetch bids:', err);
+			});
+	}, []);
 
 	useEffect(() => {
 		if (!isActive) return;
@@ -58,7 +76,7 @@ function AuctionCard({ auction }) {
 	);
 
 	return (
-		<View style={styles.card}>
+		<View style={[styles.card, style]}>
 			<View style={styles.cardMedia}>
 				{!imgError ? (
 					<Image
@@ -73,7 +91,7 @@ function AuctionCard({ auction }) {
 			</View>
 
 			<View style={styles.cardBody}>
-				<AppText style={styles.headerTitle} numberOfLines={1}>
+				<AppText bold style={styles.cardTitle} numberOfLines={1}>
 					{title}
 				</AppText>
 
@@ -84,28 +102,6 @@ function AuctionCard({ auction }) {
 							<AppText style={styles.infoItemText}>{category}</AppText>
 						</View>
 					) : null}
-					{condition ? (
-						<View style={styles.infoItem}>
-							<FontAwesome6 name="tag" style={styles.infoItemIcon} />
-							<AppText style={styles.infoItemText}>{condition}</AppText>
-						</View>
-					) : null}
-					{isShippingAvailable ? (
-						<View style={styles.infoItem}>
-							<FontAwesome6 name="truck" style={styles.infoItemIcon} />
-							<AppText style={styles.infoItemText}>Shipping</AppText>
-						</View>
-					) : null}
-				</View>
-
-				<View style={styles.infoRow}>
-					<View style={styles.infoItem}>
-						<FontAwesome6 name="user" style={styles.infoItemIcon} />
-						<AppText style={styles.infoItemText}>
-							{username || 'Username unknown'}
-						</AppText>
-					</View>
-
 					<View style={styles.infoItem}>
 						<FontAwesome6 name="location-dot" style={styles.infoItemIcon} />
 						<AppText style={styles.infoItemText}>
@@ -121,11 +117,19 @@ function AuctionCard({ auction }) {
 								: `${formatDate(startDate)} – ${formatDate(endDate)}`}
 						</AppText>
 					</View>
+					{isShippingAvailable ? (
+						<View style={styles.infoItem}>
+							<FontAwesome6 name="truck" style={styles.infoItemIcon} />
+							<AppText style={styles.infoItemText}>Shipping</AppText>
+						</View>
+					) : null}
 				</View>
 
-				<AppText style={styles.description} numberOfLines={2}>
+				<AppText style={styles.description} numberOfLines={1}>
 					{description}
 				</AppText>
+
+				<View style={{ flex: 1 }} />
 
 				<View style={styles.statsRow}>
 					{typeof viewCount === 'number' ? (
@@ -170,39 +174,37 @@ function AuctionCard({ auction }) {
 	);
 }
 
-function AuctionCardSkeleton() {
+function AuctionCardSkeleton({ style }) {
 	return (
-		<Animated.View style={styles.card}>
-			<Animated.View
-				style={[styles.cardMedia, sharedStyles.skeletonBlock]}
-			></Animated.View>
-			<Animated.View style={styles.cardBody}>
-				<Animated.View
+		<View style={[styles.card, style]}>
+			<Skeleton style={[styles.cardMedia, sharedStyles.skeletonBlock]}></Skeleton>
+			<View style={styles.cardBody}>
+				<Skeleton
 					style={[sharedStyles.skeletonLine, sharedStyles.skeletonLineTitle]}
-				></Animated.View>
-				<Animated.View
+				></Skeleton>
+				<Skeleton
 					style={[sharedStyles.skeletonLine, sharedStyles.skeletonLineWord]}
-				></Animated.View>
-				<Animated.View
+				></Skeleton>
+				<Skeleton
 					style={[sharedStyles.skeletonLine, sharedStyles.skeletonLineWord]}
-				></Animated.View>
-				<Animated.View
+				></Skeleton>
+				<Skeleton
 					style={[sharedStyles.skeletonLine, sharedStyles.skeletonLineWord]}
-				></Animated.View>
-				<Animated.View
+				></Skeleton>
+				<Skeleton
+					style={[sharedStyles.skeletonLine, sharedStyles.skeletonLineBody]}
+				></Skeleton>
+				<Skeleton
 					style={[sharedStyles.skeletonLine, sharedStyles.skeletonLineWord]}
-				></Animated.View>
-				<Animated.View
-					style={[sharedStyles.skeletonLine, sharedStyles.skeletonLineWord]}
-				></Animated.View>
-				<Animated.View
+				></Skeleton>
+				<Skeleton
 					style={[sharedStyles.skeletonLine, sharedStyles.skeletonLineTitle]}
-				></Animated.View>
-				<Animated.View
+				></Skeleton>
+				<Skeleton
 					style={[sharedStyles.skeletonLine, sharedStyles.skeletonLineButtonSmall]}
-				></Animated.View>
-			</Animated.View>
-		</Animated.View>
+				></Skeleton>
+			</View>
+		</View>
 	);
 }
 
@@ -218,23 +220,37 @@ export function AuctionListings() {
 		nextPage,
 	} = useAuctionContext();
 
+	const padding = 36;
+	const gap = 20;
+	const minWidth = 260;
+	const availableWidth = Dimensions.get('window').width - padding * 2;
+	const numCols = Math.floor((availableWidth + gap) / (minWidth + gap)) || 1;
+	const cardWidth = (availableWidth - gap * (numCols - 1)) / numCols;
+
 	return (
-		<View style={styles.section}>
+		<ScrollView style={styles.section}>
 			<View style={styles.header}>
-				<AppText style={styles.headerTitle}>Listings</AppText>
-				<AppText style={styles.count}>
-					{auctions.length} listing{auctions.length === 1 ? '' : 's'} shown
+				<AppText bold style={styles.headerTitle}>
+					Your Listings
 				</AppText>
+				{!loading && !error && (
+					<AppText style={styles.count}>
+						{auctions.length} listing{auctions.length === 1 ? '' : 's'} shown
+					</AppText>
+				)}
 			</View>
 
 			{error && <AppText style={sharedStyles.errorText}>{error}</AppText>}
 
 			{loading ? (
-				<View style={styles.grid}>
-					{Array.from({ length: pageSize }).map((_, i) => (
-						<AuctionCardSkeleton key={i} />
-					))}
-				</View>
+				<FlatList
+					data={Array.from({ length: pageSize })}
+					numColumns={numCols}
+					key={numCols}
+					columnWrapperStyle={{ gap: gap }}
+					contentContainerStyle={{ gap: gap }}
+					renderItem={() => <AuctionCardSkeleton style={{ width: cardWidth }} />}
+				/>
 			) : auctions.length === 0 && !error ? (
 				<View style={styles.empty}>
 					<FontAwesome6 name="gavel" style={styles.emptyIcon} />
@@ -247,11 +263,20 @@ export function AuctionListings() {
 				</View>
 			) : (
 				<>
-					<View style={styles.grid}>
-						{auctions.map((auction) => (
-							<AuctionCard key={auction.auction_id} auction={auction} />
-						))}
-					</View>
+					<FlatList
+						data={auctions}
+						numColumns={numCols}
+						key={numCols}
+						columnWrapperStyle={{ gap: gap }}
+						contentContainerStyle={{ gap: gap }}
+						renderItem={({ item }) => (
+							<AuctionCard
+								key={item.auction_id}
+								auction={item}
+								style={{ width: cardWidth }}
+							/>
+						)}
+					/>
 
 					{(page > 0 || hasMore) && (
 						<View style={styles.pageNav}>
@@ -260,7 +285,13 @@ export function AuctionListings() {
 								onPress={prevPage}
 								disabled={page === 0 || loading}
 							>
-								<FontAwesome6 name="chevron-left" style={styles.pageNavArrowIcon} />
+								<FontAwesome6 
+									name="chevron-left" 
+									style={[
+										styles.pageNavArrowIcon,
+										(page === 0 || loading) && styles.pageNavArrowDisabled,
+									]}
+								/>
 							</Pressable>
 							<AppText style={styles.pageNavLabel}>Page {page + 1}</AppText>
 							<Pressable
@@ -268,12 +299,18 @@ export function AuctionListings() {
 								onPress={nextPage}
 								disabled={!hasMore || loading}
 							>
-								<FontAwesome6 name="chevron-right" style={styles.pageNavArrowIcon} />
+								<FontAwesome6
+									name="chevron-right"
+									style={[
+										styles.pageNavArrowIcon,
+										(!hasMore || loading) && styles.pageNavArrowDisabled,
+									]}
+								/>
 							</Pressable>
 						</View>
 					)}
 				</>
 			)}
-		</View>
+		</ScrollView>
 	);
 }
