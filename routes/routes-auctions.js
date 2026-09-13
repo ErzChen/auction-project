@@ -1,6 +1,7 @@
 import express from 'express';
 import { searchAuctions } from '../middleware/auctions-db.js';
 import db from '../middleware/db.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 

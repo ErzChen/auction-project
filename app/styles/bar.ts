@@ -1,17 +1,16 @@
 import { StyleSheet } from 'react-native';
 import { colors, fontSizes, radius, vh, vw } from '../constants/theme';
 
-export const auctionSearchStyles = StyleSheet.create({
+export const barStyles = StyleSheet.create({
   bar: {
     position: 'absolute',
-    top: 0,
     left: 0,
     right: 0,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     width: vw(100),
-    height: vh(10),
+    height: vh(5),
     backgroundColor: colors.navy,
     zIndex: 1,
   },
@@ -37,14 +36,15 @@ export const auctionSearchStyles = StyleSheet.create({
   nav: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '40%',
+    width: '20%',
     height: '100%',
-    marginLeft: 'auto',
   },
   navButton: {
-    flex: 1,
-    minWidth: 0,
+    width: '20%',
     height: '100%',
+  },
+  navButtonHover: {
+    backgroundColor: 'rgba(250, 248, 244, 0.06)',
   },
   navButtonSpan: {
     flex: 1,
@@ -55,10 +55,7 @@ export const auctionSearchStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   navButtonDivider: {
-    position: 'absolute',
-    left: 0,
-    top: '20%',
-    height: '60%',
+    height: "60%",
     width: 1,
     backgroundColor: 'rgba(250, 248, 244, 0.15)',
   },
@@ -75,14 +72,16 @@ export const auctionSearchStyles = StyleSheet.create({
 
   profileTrigger: {
     position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   userProfileIcon: {
-    fontSize: 30,
+    fontSize: 20,
     color: colors.whiteTextMuted,
   },
   profileMenu: {
     position: 'absolute',
-    top: '110%',
+    bottom: '110%',
     right: 12,
     minWidth: 170,
     padding: 6,
@@ -104,6 +103,11 @@ export const auctionSearchStyles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: radius,
+  },
+  profileMenuItemIcon: {
+    width: 14,
+    textAlign: 'center',
+    fontSize: fontSizes.label,
   },
   profileMenuItemText: {
     fontSize: fontSizes.label,

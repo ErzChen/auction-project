@@ -9,6 +9,7 @@ export const auctionListingsStyles = StyleSheet.create({
 		paddingTop: 28,
 		paddingBottom: 48,
 		marginTop: vh(10),
+		marginBottom: vh(5),
 	},
 	header: {
 		flexDirection: 'row',

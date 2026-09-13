@@ -247,7 +247,7 @@ export function AuctionListings() {
 					data={Array.from({ length: pageSize })}
 					numColumns={numCols}
 					key={numCols}
-					columnWrapperStyle={{ gap: gap }}
+					columnWrapperStyle={numCols > 1 ? { gap: gap } : undefined}
 					contentContainerStyle={{ gap: gap }}
 					renderItem={() => <AuctionCardSkeleton style={{ width: cardWidth }} />}
 				/>
@@ -267,7 +267,7 @@ export function AuctionListings() {
 						data={auctions}
 						numColumns={numCols}
 						key={numCols}
-						columnWrapperStyle={{ gap: gap }}
+						columnWrapperStyle={numCols > 1 ? { gap: gap } : undefined}
 						contentContainerStyle={{ gap: gap }}
 						renderItem={({ item }) => (
 							<AuctionCard

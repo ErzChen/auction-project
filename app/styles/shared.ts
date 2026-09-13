@@ -16,6 +16,7 @@ export const sharedStyles = StyleSheet.create({
 	inputWrap: {
 		flexDirection: 'row',
 		alignItems: 'center',
+		justifyContent: 'center',
 		gap: 10,
 		paddingHorizontal: 14,
 		height: 46,
@@ -48,8 +49,8 @@ export const sharedStyles = StyleSheet.create({
 		fontSize: fontSizes.label,
 		color: colors.navy,
 		fontFamily: fonts.regular,
-    // web only
-    outlineStyle: 'none' as any,
+		// web only
+		outlineStyle: 'none' as any,
 	},
 	inputPrefix: {
 		fontSize: fontSizes.label,

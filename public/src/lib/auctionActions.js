@@ -48,6 +48,13 @@ export async function cancelBid(bidId) {
 	return data;
 }
 
+export function getNextMinBid(currentPrice, rules) {
+	const price = Number(currentPrice);
+	if (Number.isNaN(price) || rules.length === 0) return null;
+	const rule = rules.find((r) => price >= r.min && (r.max == null || price < r.max));
+	return rule ? price + rule.increment : null;
+}
+
 export function sortBids(bids) {
 	const bidders = {};
 	const activeBids = bids

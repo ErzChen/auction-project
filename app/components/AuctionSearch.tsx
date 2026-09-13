@@ -1,11 +1,11 @@
 import { Pressable, View } from 'react-native';
-import { auctionSearchStyles as styles } from '../styles/topBar';
-import { AppText } from './AppText';
+import { barStyles as styles } from '../styles/bar';
 import { sharedStyles } from '../styles/shared';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { AppTextInput } from './AppTextInput';
 import { useRef, useState } from 'react';
 import { useAuctionContext } from '../context/AuctionContext';
+import { vh } from '../constants/theme';
 
 export function AuctionSearch() {
 	const [focused, setFocused] = useState(false);
@@ -15,7 +15,7 @@ export function AuctionSearch() {
     const hasKeyword = keyword.length > 0;
 
 	return (
-		<View style={styles.bar}>
+		<View style={[styles.bar, { height: vh(10) }]}>
 			<View style={[sharedStyles.field, { marginBottom: 0, width: "90%" }]}>
 				<Pressable 
                     style={[

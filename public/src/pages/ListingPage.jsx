@@ -8,13 +8,13 @@ import {
 	createPreBid,
 	cancelPreBid,
 	sortBids,
+	getNextMinBid,
 } from '../lib/auctionActions.js';
 import { getUser } from '../lib/userActions.js';
 import {
 	formatPrice,
 	formatDateTime,
 	getIdFromUrl,
-	getNextMinBid,
 	formatTimeRemaining,
 } from '../lib/library.js';
 import '../styles/listing-page.css';
