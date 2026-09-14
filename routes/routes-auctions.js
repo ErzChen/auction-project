@@ -13,7 +13,7 @@ import {
 } from '../middleware/auctions-db.js';
 import db from '../middleware/db.js';
 import { authenticate } from '../middleware/auth.js';
-import { DB_DIR } from '../config.js';
+import { CATEGORIES, CURRENCIES, DB_DIR, STATUSES } from '../config.js';
 
 const router = express.Router();
 
@@ -76,6 +76,20 @@ router.get('/api/auctions', async (req, res) => {
 			limit,
 			offset,
 		} = req.query;
+
+		if (statuses) {
+			const statusList = [].concat(statuses);
+			const invalid = statusList.filter((s) => !STATUSES.includes(s));
+			if (invalid.length) {
+				return res
+					.status(400)
+					.json({ message: `Invalid status: ${invalid.join(', ')}` });
+			}
+		}
+		if (category && !CATEGORIES.includes(category)) {
+			return res.status(400).json({ message: `Invalid category: ${category}` });
+		}
+
 		const results = searchAuctions({
 			statuses: statuses ? [].concat(statuses) : undefined,
 			category,
@@ -132,6 +146,23 @@ router.patch('/api/auctions/:auction_id', authenticate, async (req, res) => {
 			...editableFields
 		} = req.body;
 
+		if (
+			editableFields.category !== undefined &&
+			!CATEGORIES.includes(editableFields.category)
+		) {
+			return res.status(400).json({
+				message: `Category must be one of: ${CATEGORIES.join(', ')}`,
+			});
+		}
+		if (
+			editableFields.currency !== undefined &&
+			!CURRENCIES.includes(editableFields.currency)
+		) {
+			return res.status(400).json({
+				message: `Currency must be one of: ${CURRENCIES.join(', ')}`,
+			});
+		}
+
 		const payload = {
 			...existing,
 			...editableFields,
@@ -159,6 +190,19 @@ router.patch('/api/auctions/:auction_id', authenticate, async (req, res) => {
 
 router.post('/api/auctions', authenticate, async (req, res) => {
 	try {
+		const { category, currency } = req.body;
+
+		if (!category || !CATEGORIES.includes(category)) {
+			return res.status(400).json({
+				message: `Category must be one of: ${CATEGORIES.join(', ')}`,
+			});
+		}
+		if (currency && !CURRENCIES.includes(currency)) {
+			return res.status(400).json({
+				message: `Currency must be one of: ${CURRENCIES.join(', ')}`,
+			});
+		}
+
 		const result = insertAuction.run({
 			...req.body,
 			user_id: req.userId,
@@ -200,6 +244,22 @@ router.delete('/api/auctions/:auction_id', authenticate, async (req, res) => {
 		console.error('Error deleting auction:', err);
 		res.status(500).json({ message: 'Failed to delete auction' });
 	}
+});
+
+router.get('/api/categories', async (req, res) => {
+	res.status(200).json({
+		categories: [
+			'Electronics',
+			'Furniture',
+			'Collectibles',
+			'Jewelry & Watches',
+			'Art',
+			'Vehicles',
+			'Sporting Goods',
+			'Home & Garden',
+			'Other',
+		],
+	});
 });
 
 router.use((err, req, res, next) => {

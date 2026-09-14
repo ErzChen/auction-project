@@ -2,6 +2,20 @@ import fs from 'fs';
 import path from 'path';
 import { Resend } from 'resend';
 
+export const CATEGORIES = [
+	'Electronics',
+	'Furniture',
+	'Collectibles',
+	'Jewelry & Watches',
+	'Art',
+	'Vehicles',
+	'Sporting Goods',
+	'Home & Garden',
+	'Other',
+];
+export const CURRENCIES = ['USD', 'CAD', 'EUR', 'GBP'];
+export const STATUSES = ['upcoming', 'active', 'sold', 'expired'];
+
 export let DB_DIR = process.env.DB_DIR;
 export let SEED_DB = process.env.SEED_DB;
 export let PORT = process.env.PORT;
@@ -41,7 +55,7 @@ if (!APPLICATION_SECRET_KEY) {
 }
 
 if (!JWT_SECRET_KEY) {
-JWT_SECRET_KEY = 'generatedRandomHexString';
+	JWT_SECRET_KEY = 'generatedRandomHexString';
 	console.error('JWT_SECRET_KEY environment variable is not set');
 }
 

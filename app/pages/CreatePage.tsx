@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Image, Pressable, ScrollView, Switch, TextInput, View } from 'react-native';
+import {
+	Image,
+	Pressable,
+	ScrollView,
+	Switch,
+	TextInput,
+	View,
+} from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { AppText } from '../components/AppText';
 import { AppTextInput } from '../components/AppTextInput';
@@ -135,18 +142,23 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 	function validate() {
 		if (!title.trim()) return 'Give your listing a title.';
 		if (title.length > 100) return 'Titles are limited to 100 characters.';
-		if (description.length > 1000) return 'Descriptions are limited to 1000 characters.';
+		if (description.length > 1000)
+			return 'Descriptions are limited to 1000 characters.';
 		if (!condition) return 'Select a condition.';
 		if (!category) return 'Select a category.';
 		if (images.length === 0) return 'Add at least one photo.';
-		if (!startingPrice || Number(startingPrice) <= 0) return 'Enter a starting price above 0.';
+		if (!startingPrice || Number(startingPrice) <= 0)
+			return 'Enter a starting price above 0.';
 		for (const row of increments) {
-			if (row.min === '' || row.increment === '') return 'Fill in every bid tier, or remove the empty one.';
-			if (row.max !== '' && Number(row.max) <= Number(row.min)) return 'Each tier\u2019s max must be greater than its min.';
+			if (row.min === '' || row.increment === '')
+				return 'Fill in every bid tier, or remove the empty one.';
+			if (row.max !== '' && Number(row.max) <= Number(row.min))
+				return 'Each tier\u2019s max must be greater than its min.';
 		}
 		if (!location.trim()) return 'Enter a pickup location.';
 		if (!locationVerified) return 'Select a valid address from the suggestions.';
-		if (!pickupDescription.trim()) return 'Describe pickup (and shipping, if offered).';
+		if (!pickupDescription.trim())
+			return 'Describe pickup (and shipping, if offered).';
 		if (shippingAvailable && (!shippingCost || Number(shippingCost) < 0)) {
 			return 'Enter a shipping cost, or turn shipping off.';
 		}
@@ -162,14 +174,17 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 		if (newImages.length === 0) return [];
 		const formData = new FormData();
 		newImages.forEach((img) => formData.append('images', img.file as File));
-		const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE}/api/auctions/uploads`, {
-			method: 'POST',
-			headers: {
-				'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY,
-				Authorization: `Bearer ${token}`,
+		const res = await fetch(
+			`${process.env.EXPO_PUBLIC_API_BASE}/api/auctions/uploads`,
+			{
+				method: 'POST',
+				headers: {
+					'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY,
+					Authorization: `Bearer ${token}`,
+				},
+				body: formData,
 			},
-			body: formData,
-		});
+		);
 		if (!res.ok) {
 			throw new Error('Photo upload failed');
 		}
@@ -188,7 +203,7 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 	async function handleDelete() {
 		if (typeof window !== 'undefined' && window.confirm) {
 			const confirmed = window.confirm(
-				'Delete this listing? This can\'t be undone.',
+				"Delete this listing? This can't be undone.",
 			);
 			if (!confirmed) return;
 		}
@@ -222,24 +237,36 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 		setImages((prev) => prev.filter((img) => img.id !== id));
 	}
 
-	function updateIncrement(id: string, field: 'min' | 'max' | 'increment', value: string) {
-		setIncrements((prev) => prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)));
+	function updateIncrement(
+		id: string,
+		field: 'min' | 'max' | 'increment',
+		value: string,
+	) {
+		setIncrements((prev) =>
+			prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
+		);
 	}
 	function addIncrement() {
 		setIncrements((prev) => [...prev, emptyIncrement()]);
 	}
 	function removeIncrement(id: string) {
-		setIncrements((prev) => (prev.length > 1 ? prev.filter((row) => row.id !== id) : prev));
+		setIncrements((prev) =>
+			prev.length > 1 ? prev.filter((row) => row.id !== id) : prev,
+		);
 	}
 
 	function updateDetail(id: string, field: 'detail' | 'info', value: string) {
-		setDetails((prev) => prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)));
+		setDetails((prev) =>
+			prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
+		);
 	}
 	function addDetail() {
 		setDetails((prev) => [...prev, emptyDetail()]);
 	}
 	function removeDetail(id: string) {
-		setDetails((prev) => (prev.length > 1 ? prev.filter((row) => row.id !== id) : prev));
+		setDetails((prev) =>
+			prev.length > 1 ? prev.filter((row) => row.id !== id) : prev,
+		);
 	}
 
 	async function fetchLocationSuggestions(text: string) {
@@ -250,12 +277,14 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 		setLocationLoading(true);
 		try {
 			const res = await fetch(
-				`https://photon.komoot.io/api/?q=${encodeURIComponent(text)}&limit=5`
+				`https://photon.komoot.io/api/?q=${encodeURIComponent(text)}&limit=5`,
 			);
 			const data = await res.json();
 			const suggestions = (data.features || [])
 				.map((f: any, i: number) => ({
-					id: f.properties?.osm_id ? `${f.properties.osm_type}-${f.properties.osm_id}` : String(i),
+					id: f.properties?.osm_id
+						? `${f.properties.osm_type}-${f.properties.osm_id}`
+						: String(i),
 					text: formatPhotonAddress(f.properties || {}),
 				}))
 				.filter((s: { id: string; text: string }) => s.text);
@@ -269,7 +298,8 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 
 	function formatPhotonAddress(props: Record<string, any>): string {
 		const parts: string[] = [];
-		if (props.housenumber && props.street) parts.push(`${props.housenumber} ${props.street}`);
+		if (props.housenumber && props.street)
+			parts.push(`${props.housenumber} ${props.street}`);
 		else if (props.street) parts.push(props.street);
 		else if (props.name) parts.push(props.name);
 		if (props.city) parts.push(props.city);
@@ -288,7 +318,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 			setLocationSuggestions([]);
 			return;
 		}
-		locationDebounceRef.current = setTimeout(() => fetchLocationSuggestions(text), 300);
+		locationDebounceRef.current = setTimeout(
+			() => fetchLocationSuggestions(text),
+			300,
+		);
 	}
 
 	function handleSelectLocation(suggestion: { id: string; text: string }) {
@@ -300,7 +333,8 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 	const isEditing = Boolean(auction);
 	const auctionStarted =
 		isEditing &&
-		(auction!.status !== 'upcoming' || new Date(auction!.start_time).getTime() <= Date.now());
+		(auction!.status !== 'upcoming' ||
+			new Date(auction!.start_time).getTime() <= Date.now());
 	const auctionExpired =
 		isEditing &&
 		(auction!.status === 'expired' ||
@@ -318,7 +352,7 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 	const [categoryOpen, setCategoryOpen] = useState(false);
 	const [images, setImages] = useState<Array<ImageItem>>(() =>
 		auction
-			? (JSON.parse(auction.image_paths || '[]')).map((path) => ({
+			? JSON.parse(auction.image_paths || '[]').map((path) => ({
 					id: nextId(),
 					uri: getImageUrl(path),
 					path,
@@ -353,7 +387,9 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 		}));
 	});
 	const [location, setLocation] = useState(auction?.location ?? '');
-	const [locationVerified, setLocationVerified] = useState(Boolean(auction?.location));
+	const [locationVerified, setLocationVerified] = useState(
+		Boolean(auction?.location),
+	);
 	const [locationSuggestions, setLocationSuggestions] = useState([]);
 	const [locationLoading, setLocationLoading] = useState(false);
 	const locationDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -366,7 +402,9 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 	const [shippingCost, setShippingCost] = useState(
 		auction?.shipping_cost != null ? String(auction.shipping_cost) : '',
 	);
-	const [startDate, setStartDate] = useState(toDateTimeLocal(auction?.start_time));
+	const [startDate, setStartDate] = useState(
+		toDateTimeLocal(auction?.start_time),
+	);
 	const [endDate, setEndDate] = useState(toDateTimeLocal(auction?.end_time));
 	const [error, setError] = useState<string | null>(null);
 	const [submitting, setSubmitting] = useState(false);
@@ -389,8 +427,6 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 	const endDateRef = useRef<TextInput>(null);
 	const coverImage = images[0]?.uri;
 
-	
-
 	useEffect(() => {
 		const input = document.createElement('input');
 		input.type = 'file';
@@ -401,7 +437,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 			files.forEach((file) => {
 				const reader = new FileReader();
 				reader.onload = () => {
-					setImages((prev) => [...prev, { id: nextId(), uri: String(reader.result), file }]);
+					setImages((prev) => [
+						...prev,
+						{ id: nextId(), uri: String(reader.result), file },
+					]);
 				};
 				reader.readAsDataURL(file);
 			});
@@ -427,7 +466,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 							onHoverOut={() => setBackHovered(false)}
 							style={{ marginTop: 16 }}
 						>
-							<AppText bold style={[sharedStyles.link, backHovered && sharedStyles.linkHover]}>
+							<AppText
+								bold
+								style={[sharedStyles.link, backHovered && sharedStyles.linkHover]}
+							>
 								Back to listings
 							</AppText>
 						</Pressable>
@@ -441,16 +483,16 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 		<ScrollView style={styles.page}>
 			<View style={styles.contentRow}>
 				<View style={styles.previewColumn}>
-                    <View style={styles.headerBlock}>
-                        <AppText bold style={styles.pageTitle}>
-                            {isEditing ? 'Edit listing' : 'List an item'}
-                        </AppText>
-                        <AppText style={styles.pageSubtitle}>
-                            {isEditing
+					<View style={styles.headerBlock}>
+						<AppText bold style={styles.pageTitle}>
+							{isEditing ? 'Edit listing' : 'List an item'}
+						</AppText>
+						<AppText style={styles.pageSubtitle}>
+							{isEditing
 								? 'Update the details below, then save your changes.'
 								: "Add photos and details, then publish when you're ready."}
-                        </AppText>
-                    </View>
+						</AppText>
+					</View>
 					<AppText style={styles.previewLabel}>Live preview</AppText>
 					<View style={cardStyles.card}>
 						<View style={cardStyles.cardMedia}>
@@ -465,20 +507,20 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 								{title || 'Untitled listing'}
 							</AppText>
 							<View style={cardStyles.infoRow}>
-                                <View style={cardStyles.infoItem}>
-                                    <FontAwesome6 name="user-large" style={cardStyles.infoItemIcon} />
-                                    <AppText style={cardStyles.infoItemText}>{username}</AppText>
-                                </View>
+								<View style={cardStyles.infoItem}>
+									<FontAwesome6 name="user-large" style={cardStyles.infoItemIcon} />
+									<AppText style={cardStyles.infoItemText}>{username}</AppText>
+								</View>
 								<View style={cardStyles.infoItem}>
 									<FontAwesome6 name="location-dot" style={cardStyles.infoItemIcon} />
 									<AppText style={cardStyles.infoItemText}>
 										{location || 'Location'}
 									</AppText>
 								</View>
-                                <View style={cardStyles.infoItem}>
+								<View style={cardStyles.infoItem}>
 									<FontAwesome6 name="calendar-days" style={cardStyles.infoItemIcon} />
 									<AppText style={cardStyles.infoItemText}>
-                                        {formatDate(startDate)} – {formatDate(endDate)}
+										{formatDate(startDate)} – {formatDate(endDate)}
 									</AppText>
 								</View>
 								{shippingAvailable ? (
@@ -498,15 +540,20 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 									{formatPrice(startingPrice, currency)}
 								</AppText>
 							</View>
-                            <View style={cardStyles.viewBtn}>
-                                <AppText bold style={cardStyles.viewBtnText}>View listing</AppText>
-                                <FontAwesome6 name="arrow-right" style={cardStyles.viewBtnIcon} />
-                            </View>
+							<View style={cardStyles.viewBtn}>
+								<AppText bold style={cardStyles.viewBtnText}>
+									View listing
+								</AppText>
+								<FontAwesome6 name="arrow-right" style={cardStyles.viewBtnIcon} />
+							</View>
 						</View>
 					</View>
 				</View>
 
-				<ScrollView style={styles.formColumn} contentContainerStyle={styles.formContent}>
+				<ScrollView
+					style={styles.formColumn}
+					contentContainerStyle={styles.formContent}
+				>
 					<View style={[styles.section, styles.sectionFirst]}>
 						<AppText bold style={styles.sectionTitle}>
 							Photos
@@ -580,7 +627,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 									onPress={() => setCategoryOpen((v) => !v)}
 								>
 									<AppText
-										style={[category && styles.dropdownValueText, styles.dropdownPlaceholder]}
+										style={[
+											category && styles.dropdownValueText,
+											styles.dropdownPlaceholder,
+										]}
 									>
 										{category || 'Choose a category'}
 									</AppText>
@@ -590,38 +640,38 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 									/>
 								</Pressable>
 							</View>
-                            {categoryOpen && (
-                                <View style={styles.dropdownMenu}>
-                                    <ScrollView>
-                                        {CATEGORIES.map((option) => (
-                                            <Pressable
-                                                key={option}
-                                                style={[
-                                                    styles.dropdownItem,
-                                                    option === category && styles.dropdownItemActive,
-                                                ]}
-                                                onPress={() => {
-                                                    setCategory(option);
-                                                    setCategoryOpen(false);
-                                                }}
-                                            >
-                                                <AppText
-                                                    style={
-                                                        option === category
-                                                            ? [styles.dropdownItemText, styles.dropdownItemTextActive]
-                                                            : styles.dropdownItemText
-                                                    }
-                                                >
-                                                    {option}
-                                                </AppText>
-                                            </Pressable>
-                                        ))}
-                                    </ScrollView>
-                                </View>
-                            )}
+							{categoryOpen && (
+								<View style={styles.dropdownMenu}>
+									<ScrollView>
+										{CATEGORIES.map((option) => (
+											<Pressable
+												key={option}
+												style={[
+													styles.dropdownItem,
+													option === category && styles.dropdownItemActive,
+												]}
+												onPress={() => {
+													setCategory(option);
+													setCategoryOpen(false);
+												}}
+											>
+												<AppText
+													style={
+														option === category
+															? [styles.dropdownItemText, styles.dropdownItemTextActive]
+															: styles.dropdownItemText
+													}
+												>
+													{option}
+												</AppText>
+											</Pressable>
+										))}
+									</ScrollView>
+								</View>
+							)}
 						</View>
 
-                        <View style={sharedStyles.field}>
+						<View style={sharedStyles.field}>
 							<AppText bold style={sharedStyles.fieldLabel}>
 								Condition
 							</AppText>
@@ -739,94 +789,97 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 						</View>
 
 						<View>
-                            <AppText bold style={sharedStyles.fieldLabel}>
-                                Bid increments
-                            </AppText>
-                            <View style={styles.dynamicColumnLabels}>
-                                <AppText style={styles.dynamicColumnLabelText}>Min</AppText>
-                                <AppText style={styles.dynamicColumnLabelText}>Max</AppText>
-                                <AppText style={styles.dynamicColumnLabelText}>Increment</AppText>
-                                <View style={{ width: 34 }} />
-                            </View>
-                            <View style={{ gap: 16 }}>
-                                {increments.map((row) => (
-                                    <View key={row.id} style={styles.dynamicRow}>
-                                        <View
-                                            style={[
-                                                sharedStyles.inputWrap,
-                                                styles.dynamicInputWrap,
-                                                styles.fieldFlex,
-                                                focusedField === `increment-${row.id}-min` &&
-                                                    sharedStyles.inputWrapFocused,
-                                            ]}
-                                        >
-                                            <AppTextInput
-                                                style={sharedStyles.inputControl}
-                                                value={row.min}
-                                                onChangeText={(t) => updateIncrement(row.id, 'min', t)}
-                                                placeholder="0"
-                                                keyboardType="numeric"
-                                                onFocus={() => setFocusedField(`increment-${row.id}-min`)}
-                                                onBlur={() => setFocusedField(null)}
-                                            />
-                                        </View>
-                                        <View
-                                            style={[
-                                                sharedStyles.inputWrap,
-                                                styles.dynamicInputWrap,
-                                                styles.fieldFlex,
-                                                focusedField === `increment-${row.id}-max` &&
-                                                    sharedStyles.inputWrapFocused,
-                                            ]}
-                                        >
-                                            <AppTextInput
-                                                style={sharedStyles.inputControl}
-                                                value={row.max}
-                                                onChangeText={(t) => updateIncrement(row.id, 'max', t)}
-                                                placeholder="No limit"
-                                                keyboardType="numeric"
-                                                onFocus={() => setFocusedField(`increment-${row.id}-max`)}
-                                                onBlur={() => setFocusedField(null)}
-                                            />
-                                        </View>
-                                        <View
-                                            style={[
-                                                sharedStyles.inputWrap,
-                                                styles.dynamicInputWrap,
-                                                styles.fieldFlex,
-                                                focusedField === `increment-${row.id}-increment` &&
-                                                    sharedStyles.inputWrapFocused,
-                                            ]}
-                                        >
-                                            <AppTextInput
-                                                style={sharedStyles.inputControl}
-                                                value={row.increment}
-                                                onChangeText={(t) => updateIncrement(row.id, 'increment', t)}
-                                                placeholder="0"
-                                                keyboardType="numeric"
-                                                onFocus={() => setFocusedField(`increment-${row.id}-increment`)}
-                                                onBlur={() => setFocusedField(null)}
-                                            />
-                                        </View>
-                                        <Pressable
-                                            style={styles.dynamicRemoveBtn}
-                                            onPress={() => removeIncrement(row.id)}
-                                        >
-                                            <FontAwesome6 name="xmark" style={styles.dynamicRemoveIcon} />
-                                        </Pressable>
-                                    </View>
-                                ))}
-                                <Pressable
-                                    style={styles.addRowBtn}
-                                    onPress={addIncrement}
-                                    onHoverIn={() => setAddTierHovered(true)}
-                                    onHoverOut={() => setAddTierHovered(false)}
-                                >
-                                    <AppText bold style={[sharedStyles.link, addTierHovered && sharedStyles.linkHover]}>
-                                        + Add tier
-                                    </AppText>
-                                </Pressable>
-                            </View>
+							<AppText bold style={sharedStyles.fieldLabel}>
+								Bid increments
+							</AppText>
+							<View style={styles.dynamicColumnLabels}>
+								<AppText style={styles.dynamicColumnLabelText}>Min</AppText>
+								<AppText style={styles.dynamicColumnLabelText}>Max</AppText>
+								<AppText style={styles.dynamicColumnLabelText}>Increment</AppText>
+								<View style={{ width: 34 }} />
+							</View>
+							<View style={{ gap: 16 }}>
+								{increments.map((row) => (
+									<View key={row.id} style={styles.dynamicRow}>
+										<View
+											style={[
+												sharedStyles.inputWrap,
+												styles.dynamicInputWrap,
+												styles.fieldFlex,
+												focusedField === `increment-${row.id}-min` &&
+													sharedStyles.inputWrapFocused,
+											]}
+										>
+											<AppTextInput
+												style={sharedStyles.inputControl}
+												value={row.min}
+												onChangeText={(t) => updateIncrement(row.id, 'min', t)}
+												placeholder="0"
+												keyboardType="numeric"
+												onFocus={() => setFocusedField(`increment-${row.id}-min`)}
+												onBlur={() => setFocusedField(null)}
+											/>
+										</View>
+										<View
+											style={[
+												sharedStyles.inputWrap,
+												styles.dynamicInputWrap,
+												styles.fieldFlex,
+												focusedField === `increment-${row.id}-max` &&
+													sharedStyles.inputWrapFocused,
+											]}
+										>
+											<AppTextInput
+												style={sharedStyles.inputControl}
+												value={row.max}
+												onChangeText={(t) => updateIncrement(row.id, 'max', t)}
+												placeholder="No limit"
+												keyboardType="numeric"
+												onFocus={() => setFocusedField(`increment-${row.id}-max`)}
+												onBlur={() => setFocusedField(null)}
+											/>
+										</View>
+										<View
+											style={[
+												sharedStyles.inputWrap,
+												styles.dynamicInputWrap,
+												styles.fieldFlex,
+												focusedField === `increment-${row.id}-increment` &&
+													sharedStyles.inputWrapFocused,
+											]}
+										>
+											<AppTextInput
+												style={sharedStyles.inputControl}
+												value={row.increment}
+												onChangeText={(t) => updateIncrement(row.id, 'increment', t)}
+												placeholder="0"
+												keyboardType="numeric"
+												onFocus={() => setFocusedField(`increment-${row.id}-increment`)}
+												onBlur={() => setFocusedField(null)}
+											/>
+										</View>
+										<Pressable
+											style={styles.dynamicRemoveBtn}
+											onPress={() => removeIncrement(row.id)}
+										>
+											<FontAwesome6 name="xmark" style={styles.dynamicRemoveIcon} />
+										</Pressable>
+									</View>
+								))}
+								<Pressable
+									style={styles.addRowBtn}
+									onPress={addIncrement}
+									onHoverIn={() => setAddTierHovered(true)}
+									onHoverOut={() => setAddTierHovered(false)}
+								>
+									<AppText
+										bold
+										style={[sharedStyles.link, addTierHovered && sharedStyles.linkHover]}
+									>
+										+ Add tier
+									</AppText>
+								</Pressable>
+							</View>
 						</View>
 					</View>
 
@@ -844,7 +897,8 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 										sharedStyles.inputWrap,
 										styles.dynamicInputWrap,
 										styles.fieldFlex,
-										focusedField === `detail-${row.id}-detail` && sharedStyles.inputWrapFocused,
+										focusedField === `detail-${row.id}-detail` &&
+											sharedStyles.inputWrapFocused,
 									]}
 								>
 									<AppTextInput
@@ -861,7 +915,8 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 										sharedStyles.inputWrap,
 										styles.dynamicInputWrap,
 										styles.fieldFlex,
-										focusedField === `detail-${row.id}-info` && sharedStyles.inputWrapFocused,
+										focusedField === `detail-${row.id}-info` &&
+											sharedStyles.inputWrapFocused,
 									]}
 								>
 									<AppTextInput
@@ -873,7 +928,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 										onBlur={() => setFocusedField(null)}
 									/>
 								</View>
-								<Pressable style={styles.dynamicRemoveBtn} onPress={() => removeDetail(row.id)}>
+								<Pressable
+									style={styles.dynamicRemoveBtn}
+									onPress={() => removeDetail(row.id)}
+								>
 									<FontAwesome6 name="xmark" style={styles.dynamicRemoveIcon} />
 								</Pressable>
 							</View>
@@ -884,7 +942,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 							onHoverIn={() => setAddDetailHovered(true)}
 							onHoverOut={() => setAddDetailHovered(false)}
 						>
-							<AppText bold style={[sharedStyles.link, addDetailHovered && sharedStyles.linkHover]}>
+							<AppText
+								bold
+								style={[sharedStyles.link, addDetailHovered && sharedStyles.linkHover]}
+							>
 								+ Add detail
 							</AppText>
 						</Pressable>
@@ -923,7 +984,9 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 								</AppText>
 							) : null}
 							{locationLoading ? (
-								<AppText style={[styles.sectionHint, { marginTop: 4 }]}>Searching…</AppText>
+								<AppText style={[styles.sectionHint, { marginTop: 4 }]}>
+									Searching…
+								</AppText>
 							) : null}
 							{locationSuggestions.length > 0 ? (
 								<View
@@ -951,7 +1014,9 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 											})}
 											onPress={() => handleSelectLocation(suggestion)}
 										>
-											<AppText style={sharedStyles.inputControl}>{suggestion.text}</AppText>
+											<AppText style={sharedStyles.inputControl}>
+												{suggestion.text}
+											</AppText>
 										</Pressable>
 									))}
 								</View>
@@ -989,15 +1054,16 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 							<View>
 								<AppText style={styles.toggleLabel}>Offer shipping</AppText>
 								<AppText style={styles.toggleHint}>
-									Turn this on if you're willing to ship instead of only meeting in person.
+									Turn this on if you're willing to ship instead of only meeting in
+									person.
 								</AppText>
 							</View>
 							<Switch
 								value={shippingAvailable}
 								onValueChange={setShippingAvailable}
 								trackColor={{ false: colors.surface, true: colors.surface }}
-                                thumbColor={shippingAvailable ? colors.init : colors.bg}
-                                {...({ activeThumbColor: colors.init } as any)}
+								thumbColor={shippingAvailable ? colors.init : colors.bg}
+								{...({ activeThumbColor: colors.init } as any)}
 							/>
 						</View>
 
@@ -1051,7 +1117,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 									<FontAwesome6 name="clock" style={sharedStyles.inputIcon} />
 									<AppTextInput
 										ref={startDateRef}
-										style={[sharedStyles.inputControl, auctionStarted && { opacity: 0.6 }]}
+										style={[
+											sharedStyles.inputControl,
+											auctionStarted && { opacity: 0.6 },
+										]}
 										value={startDate}
 										onChangeText={setStartDate}
 										placeholder="2025-06-01T18:00"
@@ -1080,7 +1149,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 									<FontAwesome6 name="clock" style={sharedStyles.inputIcon} />
 									<AppTextInput
 										ref={endDateRef}
-										style={[sharedStyles.inputControl, auctionExpired && { opacity: 0.6 }]}
+										style={[
+											sharedStyles.inputControl,
+											auctionExpired && { opacity: 0.6 },
+										]}
 										value={endDate}
 										onChangeText={setEndDate}
 										placeholder="2025-06-08T18:00"
@@ -1131,7 +1203,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 								onHoverOut={() => setCancelHovered(false)}
 								style={{ alignSelf: 'center' }}
 							>
-								<AppText bold style={[sharedStyles.link, cancelHovered && sharedStyles.linkHover]}>
+								<AppText
+									bold
+									style={[sharedStyles.link, cancelHovered && sharedStyles.linkHover]}
+								>
 									Cancel
 								</AppText>
 							</Pressable>

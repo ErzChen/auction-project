@@ -1,24 +1,24 @@
 import { useState } from 'react';
 import '../styles/auction-filter.css';
-import { DEFAULT_FILTERS, useAuctionContext } from '../context/AuctionContext.js';
+import {
+	DEFAULT_FILTERS,
+	useAuctionContext,
+} from '../context/AuctionContext.js';
 
 const CATEGORIES = [
-	'All categories',
-	'Furniture',
-	'Art',
-	'Jewelry',
-	'Collectibles',
+	'All Categories',
 	'Electronics',
+	'Furniture',
+	'Collectibles',
+	'Jewelry & Watches',
+	'Art',
 	'Vehicles',
+	'Sporting Goods',
+	'Home & Garden',
 	'Other',
 ];
 
-const STATUSES = [
-	{ value: 'upcoming', label: 'Upcoming' },
-	{ value: 'active', label: 'Active' },
-	{ value: 'sold', label: 'Sold' },
-	{ value: 'expired', label: 'Expired' },
-];
+const STATUSES = ['upcoming', 'active', 'sold', 'expired'];
 
 export function AuctionFilter({ userId = null }) {
 	const { applyFilters, resetFilters } = useAuctionContext();
@@ -27,8 +27,9 @@ export function AuctionFilter({ userId = null }) {
 		user_id: userId || null,
 	});
 
-	const hasFilters = pendingFilters.statuses.length !== DEFAULT_FILTERS.statuses.length ||
-		!DEFAULT_FILTERS.statuses.every((s) => pendingFilters.statuses.includes(s)) ||
+	const hasFilters =
+		pendingFilters.statuses.length !== DEFAULT_FILTERS.statuses.length ||
+		!DEFAULT_FILTERS.statuses.every((status) => pendingFilters.statuses.includes(status)) ||
 		pendingFilters.category !== DEFAULT_FILTERS.category ||
 		pendingFilters.keyword !== DEFAULT_FILTERS.keyword ||
 		pendingFilters.start_price !== DEFAULT_FILTERS.start_price ||
@@ -40,7 +41,7 @@ export function AuctionFilter({ userId = null }) {
 
 	function handleApply(e) {
 		e.preventDefault();
-		applyFilters({...pendingFilters, user_id: userId || null});
+		applyFilters({ ...pendingFilters, user_id: userId || null });
 	}
 
 	function handleReset() {
@@ -65,7 +66,10 @@ export function AuctionFilter({ userId = null }) {
 				<label className="field">
 					<span>Search</span>
 					<span className="input-wrap">
-						<i className="fa-solid fa-magnifying-glass input-icon" aria-hidden="true"></i>
+						<i
+							className="fa-solid fa-magnifying-glass input-icon"
+							aria-hidden="true"
+						></i>
 						<input
 							type="search"
 							placeholder="Search by title…"
@@ -99,16 +103,16 @@ export function AuctionFilter({ userId = null }) {
 				<fieldset className="field status-group">
 					<span>Status</span>
 					<div className="status-pills">
-						{STATUSES.map((s) => (
+						{STATUSES.map((status) => (
 							<button
 								type="button"
-								key={s.value}
+								key={status}
 								className={`status-pill ${
-									pendingFilters.statuses.includes(s.value) ? 'active' : ''
+									pendingFilters.statuses.includes(status) ? 'active' : ''
 								}`}
-								onClick={() => toggleStatuses(s.value)}
+								onClick={() => toggleStatuses(status)}
 							>
-								{s.label}
+								{status[0].toUpperCase() + status.slice(1)}
 							</button>
 						))}
 					</div>
