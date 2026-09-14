@@ -11,17 +11,45 @@ export const insertAuction = db.prepare(`
 		user_id, starting_price, current_price, bid_increment_rules, currency,
 		title, description, condition, category, image_paths,
 		location, is_shipping_available, shipping_pickup_description, shipping_cost,
-		start_time, end_time, status
+		start_time, end_time, status, updated_at
 	) VALUES (
 		@user_id, @starting_price, @current_price, @bid_increment_rules, @currency,
 		@title, @description, @condition, @category, @image_paths,
 		@location, @is_shipping_available, @shipping_pickup_description, @shipping_cost,
-		@start_time, @end_time, @status
+		@start_time, @end_time, @status, datetime('now')
 	)
+`);
+
+export const updateAuction = db.prepare(`
+  	UPDATE auctions
+  	SET
+		starting_price = @starting_price,
+		bid_increment_rules = @bid_increment_rules,
+		currency = @currency,
+		title = @title,
+		description = @description,
+		condition = @condition,
+		category = @category,
+		image_paths = @image_paths,
+		location = @location,
+		is_shipping_available = @is_shipping_available,
+		shipping_pickup_description = @shipping_pickup_description,
+		shipping_cost = @shipping_cost,
+		start_time = @start_time,
+		end_time = @end_time,
+		status = @status,
+		updated_at = datetime('now')
+  	WHERE auction_id = @auction_id
 `);
 
 export const getAuctionById = db.prepare(`
 	SELECT * FROM auctions WHERE auction_id = ? AND deleted = 0
+`);
+
+export const softDeleteAuction = db.prepare(`
+	UPDATE auctions
+	SET deleted = 1, deleted_at = datetime('now'), updated_at = datetime('now')
+	WHERE auction_id = ?
 `);
 
 export const updateAuctionCurrentPrice = db.prepare(`
@@ -31,6 +59,10 @@ export const updateAuctionCurrentPrice = db.prepare(`
 export const setAuctionWinner = db.prepare(`
     UPDATE auctions SET winning_user_id = ?, winning_bid_id = ?, updated_at = datetime('now')
     WHERE auction_id = ?
+`);
+
+export const deleteAuctionByUserId = db.prepare(`
+    DELETE FROM auctions WHERE user_id = ?
 `);
 
 export function searchAuctions(filters = {}) {

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import '../styles/auth-form.css';
 
-const API_BASE = CONFIG.API_BASE || 'http://localhost:3000';
-
 export function ForgotPasswordForm({ onBackToSignIn }) {
 	const [submitting, setSubmitting] = useState(false);
 	const [error, setError] = useState(null);
@@ -21,7 +19,7 @@ export function ForgotPasswordForm({ onBackToSignIn }) {
 		setSubmitting(true);
 		setError(null);
 		try {
-			const res = await fetch(`${API_BASE}/api/forgot-password`, {
+			const res = await fetch(`${CONFIG.API_BASE}/api/forgot-password`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useAuthContext } from '../context/AuthContext';
+import { colors } from '../constants/theme';
 import { formatDate, formatPrice, formatTimeRemaining } from '../lib/library';
 import {
 	Dimensions,
@@ -15,20 +15,10 @@ import { sharedStyles } from '../styles/shared';
 import { AppText } from './AppText';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useAuctionContext } from '../context/AuctionContext';
-import Animated from 'react-native-reanimated';
 import { Skeleton } from './Skeleton';
-import { getBids } from '../lib/auctionActions';
+import { getBids, getImageUrl } from '../lib/auctionActions';
 
-function getFirstImage(imagePathsJson) {
-	try {
-		const paths = JSON.parse(imagePathsJson || '[]');
-		return paths.length > 0 ? paths[0] : null;
-	} catch {
-		return null;
-	}
-}
-
-function AuctionCard({ auction, style }) {
+function AuctionCard({ auction, style, onEdit }) {
 	const [imgError, setImgError] = useState(false);
 	const [now, setNow] = useState(Date.now());
 	const [bidCount, setBidCount] = useState(0);
@@ -40,14 +30,15 @@ function AuctionCard({ auction, style }) {
 		location,
 		description,
 		status,
-		image_paths: imagePaths,
 		start_time: startDate,
 		end_time: endDate,
 		view_count: viewCount,
 		category,
 		is_shipping_available: isShippingAvailable,
 	} = auction;
-	const imageUrl = getFirstImage(imagePaths);
+	const imagePaths = JSON.parse(auction.image_paths);
+	const coverImage = imagePaths[0] || null;
+	console.log(getImageUrl(coverImage));
 	const isSold = status === 'sold';
 	const isUpcoming = status === 'upcoming';
 	const isExpired = status === 'expired';
@@ -80,7 +71,7 @@ function AuctionCard({ auction, style }) {
 			<View style={styles.cardMedia}>
 				{!imgError ? (
 					<Image
-						source={{ uri: imageUrl }}
+						source={{ uri: coverImage ? getImageUrl(coverImage) : undefined }}
 						accessibilityLabel={title}
 						onError={() => setImgError(true)}
 						style={styles.cardMediaImage}
@@ -158,17 +149,22 @@ function AuctionCard({ auction, style }) {
 									? 'Ended, no bids won'
 									: 'Current bid'}
 					</AppText>
-					<AppText style={styles.priceValue}>
+					<AppText bold style={styles.priceValue}>
 						{(isUpcoming
 							? formatPrice(startingPrice, currency)
 							: formatPrice(currentPrice, currency)) || '-'}
 					</AppText>
 				</View>
 
-				<TouchableOpacity style={styles.viewBtn}>
-					<AppText style={styles.viewBtnText}>View listing</AppText>
-					<FontAwesome6 name="arrow-right" style={styles.viewBtnIcon} />
-				</TouchableOpacity>
+				{!isSold && (
+					<TouchableOpacity
+						style={[styles.viewBtn, { backgroundColor: colors.surface, marginBottom: 8 }]}
+						onPress={() => onEdit?.(auction)}
+					>
+						<AppText style={[styles.viewBtnText, { color: colors.navy }]}>Edit listing</AppText>
+						<FontAwesome6 name="pen" style={[styles.viewBtnIcon, { color: colors.navy }]} />
+					</TouchableOpacity>
+				)}
 			</View>
 		</View>
 	);
@@ -208,7 +204,7 @@ function AuctionCardSkeleton({ style }) {
 	);
 }
 
-export function AuctionListings() {
+export function AuctionListings({ onEdit }) {
 	const {
 		auctions,
 		loading,
@@ -274,6 +270,7 @@ export function AuctionListings() {
 								key={item.auction_id}
 								auction={item}
 								style={{ width: cardWidth }}
+								onEdit={onEdit}
 							/>
 						)}
 					/>

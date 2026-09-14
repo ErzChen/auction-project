@@ -3,6 +3,7 @@ import { useAuctionContext } from '../context/AuctionContext.js';
 import { getUser } from '../lib/userActions.js';
 import { formatPrice, formatDate } from '../lib/library.js';
 import '../styles/auction-listings.css';
+import { getImageUrl } from '../lib/auctionActions.js';
 
 function getFirstImage(imagePathsJson) {
 	try {
@@ -52,7 +53,7 @@ function AuctionCard({ auction }) {
 		<article className="listing-card">
 			<div className="listing-card-media">
 				{!imgError ? (
-					<img src={imageUrl} alt={title} onError={() => setImgError(true)} />
+					<img src={getImageUrl(imageUrl)} alt={title} onError={() => setImgError(true)} />
 				) : (
 					<i
 						className="fa-solid fa-gavel listing-card-placeholder-icon"

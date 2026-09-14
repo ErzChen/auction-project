@@ -9,6 +9,7 @@ import {
 	cancelPreBid,
 	sortBids,
 	getNextMinBid,
+	getImageUrl,
 } from '../lib/auctionActions.js';
 import { getUser } from '../lib/userActions.js';
 import {
@@ -215,7 +216,7 @@ export function ListingPage() {
 
 	useEffect(() => {
 		let cancelled = false;
-		const id = 30;
+		const id = 33;
 
 		if (!id) return;
 
@@ -451,7 +452,7 @@ export function ListingPage() {
 							<div className="listing-gallery-main">
 								{images.length > 0 && !failedImages.has(images[activeImage]) ? (
 									<img
-										src={images[activeImage]}
+										src={getImageUrl(images[activeImage])}
 										alt={title}
 										onError={() => markImageFailed(images[activeImage])}
 									/>

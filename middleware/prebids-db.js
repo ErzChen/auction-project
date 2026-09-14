@@ -20,3 +20,7 @@ export const getPreBidById = db.prepare(`SELECT * FROM pre_bids WHERE pre_bid_id
 export const cancelPreBidById = db.prepare(`
 	DELETE FROM pre_bids WHERE pre_bid_id = ?
 `);
+
+export const cancelPreBidByUserId = db.prepare(`
+	DELETE FROM pre_bids WHERE user_id = ?
+`);

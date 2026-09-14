@@ -16,6 +16,7 @@ import { useFonts } from 'expo-font';
 import { AppText } from '../components/AppText';
 import { AuthForm } from '../components/AuthForm';
 import { authPageStyles as styles } from '../styles/authPage';
+import { ForgotPasswordForm } from '../components/ForgotPasswordForm';
 
 const gavelLogo = require('../assets/images/gavel-logo.png');
 
@@ -193,6 +194,8 @@ export default function AuthPage() {
 			</View>
 			{view === 'auth' ? (
 				<AuthForm onForgotPassword={() => setView('forgot')} />
+			) : view === 'forgot' ? (
+				<ForgotPasswordForm onBackToSignIn={() => setView('auth')} />
 			) : null}
 		</View>
 	);

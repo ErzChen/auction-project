@@ -39,6 +39,10 @@ export const clearWinningBids = db.prepare(`
 	UPDATE bids SET is_winning = 0 WHERE auction_id = ? AND is_winning = 1
 `);
 
+export const cancelBidByUserId = db.prepare(`
+	DELETE FROM bids WHERE user_id = ?
+`);
+
 export function incrementFor(rules, price) {
 	const rule = rules.find(
 		(rule) => price >= rule.min && (rule.max === null || price < rule.max),

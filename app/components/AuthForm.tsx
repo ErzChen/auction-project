@@ -9,11 +9,7 @@ import { sharedStyles } from '../styles/shared';
 import { LayoutChangeEvent } from 'react-native';
 import { User } from '../constants/types';
 
-export function AuthForm({
-	onForgotPassword,
-}: {
-	onForgotPassword: () => void;
-}) {
+export function AuthForm({ onForgotPassword }) {
 	function resetFields() {
 		setUsername('');
 		setEmail('');
@@ -22,7 +18,7 @@ export function AuthForm({
 		setError(null);
 	}
 
-	function switchTo(signIn: boolean) {
+	function switchTo(signIn) {
 		setUsingSignIn(signIn);
 		resetFields();
 		setForgotHovered(false);

@@ -111,3 +111,8 @@ export async function cancelPreBid(preBidId) {
 	if (!res.ok) throw new Error(data.message || 'Failed to cancel pre-bid');
 	return data;
 }
+
+export function getImageUrl(filename) {
+	return `${CONFIG.API_BASE}/uploads/${filename}`;
+}
+

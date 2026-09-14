@@ -7,6 +7,7 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import {
 	deleteSession,
+	deleteUser,
 	expirePasswordReset,
 	getPasswordResetByToken,
 	getUserByEmail,
@@ -20,6 +21,9 @@ import {
 } from '../middleware/users-db.js';
 import { authenticate } from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
+import { cancelBidByUserId } from '../middleware/bids-db.js';
+import { cancelPreBidByUserId } from '../middleware/prebids-db.js';
+import { deleteAuctionByUserId } from '../middleware/auctions-db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -246,6 +250,10 @@ router.get('/api/user/:user_id', async (req, res) => {
 		console.error(err);
 		res.status(500).json({ message: 'Something went wrong' });
 	}
+});
+
+router.delete('/api/delete', authenticate, async (req, res) => {
+	deleteUser.run(req.userId);
 });
 
 router.get('/api/me', authenticate, async (req, res) => {

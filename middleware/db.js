@@ -62,9 +62,9 @@ db.exec(`
         deleted INTEGER NOT NULL DEFAULT 0,
         deleted_at TEXT,
 
-        FOREIGN KEY (user_id) REFERENCES users(user_id),
-        FOREIGN KEY (winning_user_id) REFERENCES users(user_id),
-        FOREIGN KEY (winning_bid_id) REFERENCES bids(bid_id)
+        FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+        FOREIGN KEY (winning_user_id) REFERENCES users(user_id) ON DELETE SET NULL,
+        FOREIGN KEY (winning_bid_id) REFERENCES bids(bid_id) ON DELETE SET NULL
     );
 `);
 
@@ -78,8 +78,8 @@ db.exec(`
         is_winning INTEGER NOT NULL DEFAULT 0,  
         is_cancelled INTEGER NOT NULL DEFAULT 0,
 
-        FOREIGN KEY (auction_id) REFERENCES auctions(auction_id),
-        FOREIGN KEY (user_id) REFERENCES users(user_id)
+        FOREIGN KEY (auction_id) REFERENCES auctions(auction_id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     ); 
 `);
 
@@ -91,8 +91,8 @@ db.exec(`
         amount INTEGER NOT NULL,
         created_at TEXT NOT NULL DEFAULT (datetime('now')),
 
-        FOREIGN KEY (auction_id) REFERENCES auctions(auction_id),
-        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (auction_id) REFERENCES auctions(auction_id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
         UNIQUE (auction_id, user_id)
     );
 `);
@@ -103,14 +103,14 @@ db.exec(`
         viewer_key TEXT NOT NULL,
 
         PRIMARY KEY (auction_id, viewer_key),
-        FOREIGN KEY (auction_id) REFERENCES auctions(auction_id)
+        FOREIGN KEY (auction_id) REFERENCES auctions(auction_id) ON DELETE CASCADE
     );
 `);
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS sessions (
         session_id TEXT PRIMARY KEY,
-        user_id INTEGER NOT NULL REFERENCES users(user_id),
+        user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
         expires_at INTEGER NOT NULL,
         created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
@@ -119,7 +119,7 @@ db.exec(`
 db.exec(`
     CREATE TABLE IF NOT EXISTS password_resets (
         reset_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL REFERENCES users(user_id),
+        user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
         token_hash TEXT NOT NULL,
         expires_at INTEGER NOT NULL,
         used INTEGER NOT NULL DEFAULT 0

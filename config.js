@@ -41,7 +41,7 @@ if (!APPLICATION_SECRET_KEY) {
 }
 
 if (!JWT_SECRET_KEY) {
-	JWT_SECRET_KEY = 'generatedRandomHexString';
+JWT_SECRET_KEY = 'generatedRandomHexString';
 	console.error('JWT_SECRET_KEY environment variable is not set');
 }
 

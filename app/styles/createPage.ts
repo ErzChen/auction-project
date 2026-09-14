@@ -12,7 +12,6 @@ export const createPageStyles = StyleSheet.create({
 		backgroundColor: colors.bg,
 		gap: 28,
 	},
-
 	headerBlock: {
 		maxWidth: 560,
         marginBottom: 20,
@@ -27,14 +26,11 @@ export const createPageStyles = StyleSheet.create({
 		fontSize: fontSizes.subtitle,
 		color: colors.navyTextMuted,
 	},
-
 	contentRow: {
 		flexDirection: 'row',
 		alignItems: 'flex-start',
 		gap: 48,
 	},
-
-	// preview column
 	previewColumn: {
 		width: '32%',
 		gap: 12,
@@ -48,7 +44,6 @@ export const createPageStyles = StyleSheet.create({
 		color: colors.navyTextMuted,
 	},
 
-	// form column
 	formColumn: {
 		flex: 1,
 	},
@@ -105,8 +100,6 @@ export const createPageStyles = StyleSheet.create({
 		color: colors.navy,
 		textAlignVertical: 'top',
 	},
-
-	// pill / segmented selector (condition, currency)
 	pillRow: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
@@ -130,7 +123,6 @@ export const createPageStyles = StyleSheet.create({
 		color: colors.whiteTextPrimary,
 	},
 
-	// category dropdown
 	dropdownWrap: {
 		position: 'relative',
 	},
@@ -180,8 +172,6 @@ export const createPageStyles = StyleSheet.create({
 		fontWeight: '700',
 		color: colors.navy,
 	},
-
-	// photos
 	photosRow: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
@@ -233,8 +223,6 @@ export const createPageStyles = StyleSheet.create({
 		fontSize: fontSizes.body,
 		color: colors.navyTextMuted,
 	},
-
-	// dynamic rows (bid tiers, item details)
 	dynamicRow: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -269,7 +257,6 @@ export const createPageStyles = StyleSheet.create({
 		alignSelf: 'flex-start',
 	},
 
-	// shipping toggle
 	toggleRow: {
 		flexDirection: 'row',
 		alignItems: 'center',

@@ -5,6 +5,10 @@ export const insertUser = db.prepare(`
     VALUES (?, ?, ?)
 `);
 
+export const deleteUser = db.prepare(`
+    DELETE FROM users
+    WHERE user_id = ?
+`);
 export const getUserById = db.prepare(`SELECT * FROM users WHERE user_id = ?`);
 
 export const getUserByUsername = db.prepare(`
