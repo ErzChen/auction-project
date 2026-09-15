@@ -20,12 +20,15 @@ const CATEGORIES = [
 
 const STATUSES = ['upcoming', 'active', 'sold', 'expired'];
 
+const DEFAULT_RADIUS_KM = 25;
+
 export function AuctionFilter({ userId = null }) {
 	const { applyFilters, resetFilters } = useAuctionContext();
 	const [pendingFilters, setPendingFilters] = useState({
 		...DEFAULT_FILTERS,
 		user_id: userId || null,
 	});
+	const [locationStatus, setLocationStatus] = useState('idle'); 
 
 	const hasFilters =
 		pendingFilters.statuses.length !== DEFAULT_FILTERS.statuses.length ||
@@ -33,7 +36,29 @@ export function AuctionFilter({ userId = null }) {
 		pendingFilters.category !== DEFAULT_FILTERS.category ||
 		pendingFilters.keyword !== DEFAULT_FILTERS.keyword ||
 		pendingFilters.start_price !== DEFAULT_FILTERS.start_price ||
-		pendingFilters.end_price !== DEFAULT_FILTERS.end_price;
+		pendingFilters.end_price !== DEFAULT_FILTERS.end_price ||
+		pendingFilters.radius !== DEFAULT_FILTERS.radius;
+
+	function handleUseMyLocation() {
+		if (!navigator.geolocation) {
+			setLocationStatus('error');
+			return;
+		}
+		setLocationStatus('locating');
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				setPendingFilters((prev) => ({
+					...prev,
+					lat: position.coords.latitude,
+					lng: position.coords.longitude,
+					radius: prev.radius || DEFAULT_RADIUS_KM,
+				}));
+				setLocationStatus('done');
+			},
+			() => setLocationStatus('error'),
+			{ enableHighAccuracy: false, timeout: 10000 },
+		);
+	}
 
 	function handleFieldChange(field, value) {
 		setPendingFilters((prev) => ({ ...prev, [field]: value }));
@@ -41,11 +66,19 @@ export function AuctionFilter({ userId = null }) {
 
 	function handleApply(e) {
 		e.preventDefault();
-		applyFilters({ ...pendingFilters, user_id: userId || null });
+		const hasDistance = pendingFilters.lat != null && pendingFilters.lng != null && pendingFilters.radius;
+		applyFilters({
+			...pendingFilters,
+			...(hasDistance
+				? {}
+				: { lat: DEFAULT_FILTERS.lat, lng: DEFAULT_FILTERS.lng, radius: DEFAULT_FILTERS.radius }),
+			user_id: userId || null,
+		});
 	}
 
 	function handleReset() {
 		setPendingFilters({ ...DEFAULT_FILTERS, user_id: userId || null });
+		setLocationStatus('idle');
 		resetFilters({ user_id: userId || null });
 	}
 
@@ -143,6 +176,41 @@ export function AuctionFilter({ userId = null }) {
 							/>
 						</span>
 					</div>
+				</div>
+
+				<div className="field">
+					<span>Distance</span>
+					<div className="filter-distance-inputs">
+						<span className="input-wrap">
+							<input
+								type="number"
+								min="1"
+								step="1"
+								placeholder="Radius"
+								value={pendingFilters.radius}
+								disabled={pendingFilters.lat == null || pendingFilters.lng == null}
+								onChange={(e) => handleFieldChange('radius', e.target.value)}
+							/>
+							<span>km</span>
+						</span>
+						<button
+							type="button"
+							className="use-location-btn"
+							onClick={handleUseMyLocation}
+							disabled={locationStatus === 'locating'}
+						>
+							<i className="fa-solid fa-location-crosshairs" aria-hidden="true"></i>
+							{locationStatus === 'locating' ? 'Locating…' : 'Use my location'}
+						</button>
+					</div>
+					{locationStatus === 'done' && pendingFilters.lat != null && (
+						<span className="status-text" style={{ textTransform: 'none', textAlign: 'center', marginTop: '18px' }}>Location set</span>
+					)}
+					{locationStatus === 'error' && (
+						<span className="status-text error-text" style={{ textTransform: 'none', textAlign: 'center', marginTop: '18px' }}>
+							Couldn't get your location, check browser permissions.
+						</span>
+					)}
 				</div>
 
 				<button type="submit" className="submit">

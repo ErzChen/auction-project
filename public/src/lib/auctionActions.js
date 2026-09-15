@@ -8,6 +8,9 @@ export async function getAuctions(filters) {
 	if (filters.keyword) params.set('keyword', filters.keyword);
 	if (filters.start_price) params.set('start_price', filters.start_price);
 	if (filters.end_price) params.set('end_price', filters.end_price);
+	if (filters.lat != null) params.set('lat', filters.lat);
+	if (filters.lng != null) params.set('lng', filters.lng);
+	if (filters.radius) params.set('radius', filters.radius);
 	if (filters.id) params.set('id', filters.id);
 	if (filters.user_id) params.set('user_id', filters.user_id);
 	if (filters.limit) params.set('limit', filters.limit);

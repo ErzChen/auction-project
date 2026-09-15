@@ -10,12 +10,12 @@ export const insertAuction = db.prepare(`
 	INSERT INTO auctions (
 		user_id, starting_price, current_price, bid_increment_rules, currency,
 		title, description, condition, category, image_paths,
-		location, is_shipping_available, shipping_pickup_description, shipping_cost,
+		location, latitude, longitude, is_shipping_available, shipping_pickup_description, shipping_cost,
 		start_time, end_time, status, updated_at
 	) VALUES (
 		@user_id, @starting_price, @current_price, @bid_increment_rules, @currency,
 		@title, @description, @condition, @category, @image_paths,
-		@location, @is_shipping_available, @shipping_pickup_description, @shipping_cost,
+		@location, @latitude, @longitude, @is_shipping_available, @shipping_pickup_description, @shipping_cost,
 		@start_time, @end_time, @status, datetime('now')
 	)
 `);
@@ -32,6 +32,8 @@ export const updateAuction = db.prepare(`
 		category = @category,
 		image_paths = @image_paths,
 		location = @location,
+		latitude = @latitude,
+		longitude = @longitude,
 		is_shipping_available = @is_shipping_available,
 		shipping_pickup_description = @shipping_pickup_description,
 		shipping_cost = @shipping_cost,
@@ -65,6 +67,19 @@ export const deleteAuctionByUserId = db.prepare(`
     DELETE FROM auctions WHERE user_id = ?
 `);
 
+const EARTH_RADIUS_MILES = 3958.8;
+
+function haversineDistanceMiles(lat1, lng1, lat2, lng2) {
+	const toRad = (deg) => (deg * Math.PI) / 180;
+	const dLat = toRad(lat2 - lat1);
+	const dLng = toRad(lng2 - lng1);
+	const a =
+		Math.sin(dLat / 2) ** 2 +
+		Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	return EARTH_RADIUS_MILES * c;
+}
+
 export function searchAuctions(filters = {}) {
 	const {
 		statuses,
@@ -74,6 +89,9 @@ export function searchAuctions(filters = {}) {
 		end_price,
 		user_id,
 		id,
+		lat,
+		lng,
+		radius,
 		limit,
 		offset,
 	} = filters;
@@ -125,18 +143,53 @@ export function searchAuctions(filters = {}) {
 
 	const safeLimit = Number(limit) || 20;
 	const safeOffset = Number(offset) || 0;
-	params.push(safeLimit, safeOffset);
 
-	const getAuction = db.prepare(`
+	const hasDistanceFilter = lat !== undefined && lng !== undefined && radius !== undefined
+		&& lat !== '' && lng !== '' && radius !== '';
+
+	if (!hasDistanceFilter) {
+		params.push(safeLimit, safeOffset);
+
+		const getAuction = db.prepare(`
+			SELECT *
+			FROM auctions
+			WHERE deleted = 0
+			${conditions.length ? 'AND ' + conditions.join(' AND ') : ''}
+			ORDER BY auction_id DESC
+			LIMIT ? OFFSET ?
+		`);
+
+		return getAuction.all(...params);
+	}
+
+	conditions.push('latitude IS NOT NULL', 'longitude IS NOT NULL');
+
+	const getCandidates = db.prepare(`
 		SELECT *
 		FROM auctions
 		WHERE deleted = 0
-		${conditions.length ? 'AND ' + conditions.join(' AND ') : ''}
-		ORDER BY auction_id DESC
-		LIMIT ? OFFSET ?
+		AND ${conditions.join(' AND ')}
 	`);
 
-	return getAuction.all(...params);
+	const userLat = Number(lat);
+	const userLng = Number(lng);
+	const radiusMiles = Number(radius);
+
+	const withinRadius = getCandidates
+		.all(...params)
+		.map((auction) => ({
+			...auction,
+			distance_miles: haversineDistanceMiles(
+				userLat,
+				userLng,
+				auction.latitude,
+				auction.longitude,
+			),
+		}))
+		.filter((auction) => auction.distance_miles <= radiusMiles)
+		.sort((a, b) => a.distance_miles - b.distance_miles);
+
+	return withinRadius.slice(safeOffset, safeOffset + safeLimit);
 }
 
 const getDueUpcomingAuctions = db.prepare(`

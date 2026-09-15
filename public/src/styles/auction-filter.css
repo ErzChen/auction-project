@@ -39,6 +39,63 @@
 	gap: 8px;
 }
 
+/* Distance */
+
+.filter-distance-inputs {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.filter-distance-inputs .input-wrap {
+	flex: 1;
+}
+
+.use-location-btn {
+	all: unset;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 46px;
+	padding: 0 14px;
+	white-space: nowrap;
+	box-sizing: border-box;
+	border: 1px solid rgba(12, 44, 74, 0.14);
+	border-radius: var(--border-radius);
+	background-color: transparent;
+	color: var(--navy);
+	font-size: var(--body-size);
+	font-weight: 700;
+	cursor: pointer;
+	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.use-location-btn i {
+	font-size: var(--body-size);
+	color: var(--init);
+	transition: color 0.2s ease;
+}
+
+.use-location-btn:hover:not(:disabled) {
+	background-color: var(--surface);
+	border-color: var(--init);
+}
+
+.use-location-btn:active:not(:disabled) {
+	background-color: var(--init-focus);
+}
+
+.use-location-btn:disabled {
+	border-color: var(--surface);
+	color: var(--navy-text-disabled);
+	cursor: default;
+}
+
+.use-location-btn:disabled i {
+	color: var(--navy-text-disabled);
+}
+
 /* Buttons */
 
 .filter-apply-btn {

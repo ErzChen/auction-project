@@ -8,6 +8,9 @@ export const DEFAULT_FILTERS = {
 	keyword: '',
 	start_price: '',
 	end_price: '',
+	lat: null,
+	lng: null,
+	radius: '',
 };
 
 export function useAuctionContext() {

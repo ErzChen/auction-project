@@ -116,6 +116,17 @@ body {
 	color: var(--navy-text-disabled);
 }
 
+.input-wrap input:disabled,
+.input-wrap select:disabled {
+	color: var(--navy-text-disabled);
+	cursor: not-allowed;
+}
+
+.input-wrap:has(input:disabled),
+.input-wrap:has(select:disabled) {
+	background-color: var(--bg);
+}
+
 .input-wrap input:-webkit-autofill,
 .input-wrap input:-webkit-autofill:hover,
 .input-wrap input:-webkit-autofill:focus,

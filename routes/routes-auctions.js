@@ -73,6 +73,9 @@ router.get('/api/auctions', async (req, res) => {
 			end_price,
 			user_id,
 			id,
+			lat,
+			lng,
+			radius,
 			limit,
 			offset,
 		} = req.query;
@@ -90,6 +93,28 @@ router.get('/api/auctions', async (req, res) => {
 			return res.status(400).json({ message: `Invalid category: ${category}` });
 		}
 
+		const hasAnyDistanceParam = lat !== undefined || lng !== undefined || radius !== undefined;
+		if (hasAnyDistanceParam) {
+			const parsedLat = Number(lat);
+			const parsedLng = Number(lng);
+			const parsedRadius = Number(radius);
+
+			if (lat === undefined || lng === undefined || radius === undefined) {
+				return res.status(400).json({
+					message: 'lat, lng, and radius must all be provided together',
+				});
+			}
+			if (Number.isNaN(parsedLat) || parsedLat < -90 || parsedLat > 90) {
+				return res.status(400).json({ message: 'Invalid lat' });
+			}
+			if (Number.isNaN(parsedLng) || parsedLng < -180 || parsedLng > 180) {
+				return res.status(400).json({ message: 'Invalid lng' });
+			}
+			if (Number.isNaN(parsedRadius) || parsedRadius <= 0) {
+				return res.status(400).json({ message: 'Invalid radius' });
+			}
+		}
+
 		const results = searchAuctions({
 			statuses: statuses ? [].concat(statuses) : undefined,
 			category,
@@ -98,6 +123,9 @@ router.get('/api/auctions', async (req, res) => {
 			end_price,
 			user_id,
 			id,
+			lat,
+			lng,
+			radius,
 			limit,
 			offset,
 		});

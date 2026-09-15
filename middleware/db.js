@@ -47,6 +47,8 @@ db.exec(`
 
         -- location/shipping
         location TEXT NOT NULL,
+        latitude REAL,
+        longitude REAL,
         shipping_pickup_description TEXT NOT NULL,
         is_shipping_available INTEGER NOT NULL DEFAULT 0,
         shipping_cost INTEGER,
@@ -67,6 +69,15 @@ db.exec(`
         FOREIGN KEY (winning_bid_id) REFERENCES bids(bid_id) ON DELETE SET NULL
     );
 `);
+
+const auctionColumns = db.prepare(`PRAGMA table_info(auctions)`).all();
+const auctionColumnNames = new Set(auctionColumns.map((col) => col.name));
+if (!auctionColumnNames.has('latitude')) {
+	db.exec(`ALTER TABLE auctions ADD COLUMN latitude REAL`);
+}
+if (!auctionColumnNames.has('longitude')) {
+	db.exec(`ALTER TABLE auctions ADD COLUMN longitude REAL`);
+}
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS bids (
