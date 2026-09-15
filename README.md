@@ -38,7 +38,7 @@ The project is made up of three parts that share one backend:
 - Resend (transactional email)
 
 **Web client**
-- React 19, Vite, React Router
+- React 19, Vite
 - Vanilla CSS 
 
 **Client application**
