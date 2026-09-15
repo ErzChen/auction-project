@@ -93,6 +93,10 @@ npm install
 
 Set `API_BASE` in a `.env` file 
 
+```bash
+npm run build # in public dir
+```
+
 ### 3. Mobile/Universal client (Expo)
 
 ```bash
