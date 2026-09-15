@@ -48,6 +48,10 @@ export const getAuctionById = db.prepare(`
 	SELECT * FROM auctions WHERE auction_id = ? AND deleted = 0
 `);
 
+export const getAuctionImagePathsByUserId = db.prepare(`
+	SELECT image_paths FROM auctions WHERE user_id = ?
+`);
+
 export const softDeleteAuction = db.prepare(`
 	UPDATE auctions
 	SET deleted = 1, deleted_at = datetime('now'), updated_at = datetime('now')

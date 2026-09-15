@@ -110,6 +110,10 @@ export function AuctionProvider({
 			);
 		}
 
+		function handleDeleteAuction(auctionId) {
+            setAuctions((prev) => prev.filter((auction) => auction.auction_id != auctionId));
+        }
+
 		function handleNewBid(data) {
 			updateAuction(data.auction_id, { current_price: data.current_price });
 		}
@@ -130,11 +134,13 @@ export function AuctionProvider({
 
 		socket.on('new-bid', handleNewBid);
 		socket.on('bid-cancelled', handleBidCancelled);
+        socket.on('delete-auction', handleDeleteAuction);
 		socket.on('update-auction-status', handleUpdateStatus);
 
 		return () => {
 			socket.off('new-bid', handleNewBid);
 			socket.off('bid-cancelled', handleBidCancelled);
+        	socket.off('delete-auction', handleDeleteAuction);
 			socket.off('update-auction-status', handleUpdateStatus);
 
 			for (const id of joinedRoomsRef.current) {

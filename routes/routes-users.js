@@ -23,7 +23,7 @@ import { authenticate } from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import { cancelBidByUserId } from '../middleware/bids-db.js';
 import { cancelPreBidByUserId } from '../middleware/prebids-db.js';
-import { deleteAuctionByUserId } from '../middleware/auctions-db.js';
+import { deleteAuctionByUserId, getAuctionImagePathsByUserId } from '../middleware/auctions-db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -253,7 +253,26 @@ router.get('/api/user/:user_id', async (req, res) => {
 });
 
 router.delete('/api/delete', authenticate, async (req, res) => {
-	deleteUser.run(req.userId);
+	try {
+		const auctionRows = getAuctionImagePathsByUserId.all(req.userId);
+
+		await Promise.all(
+			auctionRows.map((row) => deleteImageFiles(row.image_paths)),
+		);
+
+		deleteUser.run(req.userId);
+
+		res.clearCookie('sessionId', {
+			httpOnly: true,
+			secure: true,
+			sameSite: 'lax',
+		});
+
+		res.status(200).json({ message: 'Account deleted' });
+	} catch (err) {
+		console.error('Error deleting account:', err);
+		res.status(500).json({ message: 'Failed to delete account' });
+	}
 });
 
 router.get('/api/me', authenticate, async (req, res) => {

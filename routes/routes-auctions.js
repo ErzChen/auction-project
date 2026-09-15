@@ -14,21 +14,9 @@ import {
 import db from '../middleware/db.js';
 import { authenticate } from '../middleware/auth.js';
 import { CATEGORIES, CURRENCIES, DB_DIR, STATUSES } from '../config.js';
+import { deleteImageFiles } from '../middleware/uploads.js';
 
 const router = express.Router();
-
-const UPLOAD_DIR = path.join(DB_DIR, 'uploads');
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-const upload = multer({
-	storage: multer.memoryStorage(),
-	limits: { fileSize: 10 * 1024 * 1024, files: 8 },
-	fileFilter: (req, file, cb) => {
-		if (!file.mimetype.startsWith('image/')) {
-			return cb(new Error('Only image files are allowed'));
-		}
-		cb(null, true);
-	},
-});
 
 router.post(
 	'/api/auctions/uploads',
@@ -93,7 +81,8 @@ router.get('/api/auctions', async (req, res) => {
 			return res.status(400).json({ message: `Invalid category: ${category}` });
 		}
 
-		const hasAnyDistanceParam = lat !== undefined || lng !== undefined || radius !== undefined;
+		const hasAnyDistanceParam =
+			lat !== undefined || lng !== undefined || radius !== undefined;
 		if (hasAnyDistanceParam) {
 			const parsedLat = Number(lat);
 			const parsedLng = Number(lng);
@@ -266,6 +255,8 @@ router.delete('/api/auctions/:auction_id', authenticate, async (req, res) => {
 				.json({ message: "This listing has already ended and can't be deleted" });
 
 		softDeleteAuction.run(auctionId);
+		await deleteImageFile(existing.image_paths);
+
 		getIo().to(`auction:${auctionId}`).emit('delete-auction', auctionId);
 		res.status(204).json({ message: 'Auction successfully deleted' });
 	} catch (err) {
