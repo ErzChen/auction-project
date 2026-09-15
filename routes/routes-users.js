@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import db from '../middleware/db.js';
 import crypto from 'crypto';
-import { FRONTEND_URL, JWT_SECRET_KEY, resend } from '../config.js';
+import { JWT_SECRET_KEY, PORT, resend } from '../config.js';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import {
@@ -179,7 +179,7 @@ router.post('/api/forgot-password', async (req, res) => {
 
 			insertPasswordReset.run(user.user_id, tokenHash, expiresAt);
 
-			const resetLink = `${FRONTEND_URL}/reset-password?token=${rawToken}`;
+			const resetLink = `http://localhost:${PORT}/reset-password?token=${rawToken}`;
 
 			await resend.emails.send({
 				from: 'onboarding@resend.dev',

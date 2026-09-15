@@ -153,3 +153,86 @@
 	background-color: var(--urgent-focus);
 	color: var(--urgent-hover);
 }
+
+/* ------- Delete account modal ------- */
+
+.modal-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 2;
+	background-color: var(--overlay);
+	opacity: 0.3;
+}
+
+.modal {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 3;
+	width: 50%;
+	background-color: var(--bg);
+	border-radius: var(--border-radius);
+	padding: 26px;
+}
+
+.modal-close-btn {
+	all: unset;
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	width: 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--border-radius);
+	color: var(--navy-text-muted);
+	cursor: pointer;
+}
+
+.modal-close-btn:hover {
+	background-color: var(--surface);
+}
+
+.modal-title {
+	text-align: center;
+	margin: 14px 0;
+	font-size: var(--title-size);
+	font-weight: 800;
+	line-height: 30px;
+	color: var(--navy);
+}
+
+.modal-actions {
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.modal-actions .submit {
+	width: 20%;
+}
+
+.submit-success {
+	background-color: var(--success);
+}
+
+.submit-success:hover {
+	background-color: var(--success-hover) !important;
+}
+
+.submit-success:active {
+	background-color: var(--success-active) !important;
+}
+
+.submit-urgent {
+	background-color: var(--urgent);
+}
+
+.submit-urgent:hover {
+	background-color: var(--urgent-hover) !important;
+}
+
+.submit-urgent:active {
+	background-color: var(--urgent-active) !important;
+}

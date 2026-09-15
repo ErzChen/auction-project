@@ -1,8 +1,4 @@
-import {
-	APPLICATION_SECRET_KEY,
-	FRONTEND_URL,
-	JWT_SECRET_KEY,
-} from '../config.js';
+import { APPLICATION_SECRET_KEY, JWT_SECRET_KEY } from '../config.js';
 import db from './db.js';
 import { getSession } from './users-db.js';
 import jwt from 'jsonwebtoken';
@@ -37,7 +33,7 @@ export function verifyApplication(req, res, next) {
 	const requestOrigin = req.headers.origin;
 	const selfOrigin = `${req.protocol}://${req.get('host')}`;
 
-	if (!requestOrigin || requestOrigin === FRONTEND_URL || requestOrigin === selfOrigin) {
+	if (!requestOrigin || requestOrigin === selfOrigin) {
 		return next();
 	}
 

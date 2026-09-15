@@ -1,7 +1,7 @@
 import { getWinningBid, insertBid } from './bids-db.js';
 import db from './db.js';
 import { getPreBidsForAuction } from './prebids-db.js';
-import { FRONTEND_URL, resend } from '../config.js';
+import { PORT, resend } from '../config.js';
 import { getUserById } from './users-db.js';
 import { getIo } from './socket.js';
 
@@ -306,7 +306,7 @@ export async function expireActiveAuctions() {
 					subject: auction.title,
 					html: `
 					<p>You have won the auction for a ${auction.title}</p>
-					<p><a href="${FRONTEND_URL}/listing/${auction.auction_id}">Pay at the listing page</a></p>
+					<p><a href="http://localhost:${PORT}/listing/${auction.auction_id}">Pay at the listing page</a></p>
 				`,
 				})
 				.catch((err) =>

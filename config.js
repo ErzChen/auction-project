@@ -19,7 +19,6 @@ export const STATUSES = ['upcoming', 'active', 'sold', 'expired'];
 export let DB_DIR = process.env.DB_DIR;
 export let SEED_DB = process.env.SEED_DB;
 export let PORT = process.env.PORT;
-export let FRONTEND_URL = process.env.FRONTEND_URL;
 export let APPLICATION_SECRET_KEY = process.env.APPLICATION_SECRET_KEY;
 export let JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 export let FRONTEND_DIST_DIR = process.env.FRONTEND_DIST_DIR;
@@ -43,11 +42,6 @@ export const resend = new Resend(process.env.RESEND_API_KEY);
 if (!PORT) {
 	PORT = 3000;
 	console.error('PORT environment variable is not set');
-}
-
-if (!FRONTEND_URL) {
-	FRONTEND_URL = 'http://localhost:5173';
-	console.error('FRONTEND_URL environment variable is not set');
 }
 
 if (!APPLICATION_SECRET_KEY) {

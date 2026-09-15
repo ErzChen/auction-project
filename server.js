@@ -7,7 +7,7 @@ import prebidRoutes from './routes/routes-prebids.js';
 import bidRoutes from './routes/routes-bids.js';
 import userRoutes from './routes/routes-users.js';
 import { seedDatabase } from './seed-auctions.js';
-import { DB_DIR, FRONTEND_DIST_DIR, FRONTEND_URL, PORT, SEED_DB } from './config.js';
+import { DB_DIR, FRONTEND_DIST_DIR, PORT, SEED_DB } from './config.js';
 import cookieParser from 'cookie-parser';
 import {
 	activateUpcomingAuctions,
@@ -25,8 +25,6 @@ const httpServer = createServer(app);
 export const corsOptions = {
 	origin: (origin, callback) => {
 		if (!origin) return callback(null, true);
-		if (FRONTEND_URL == origin || 'http://localhost:8081' == origin)
-			return callback(null, true);
 
 		callback(null, false);
 	},

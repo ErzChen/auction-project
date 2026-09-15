@@ -33,7 +33,7 @@ function Bar({
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [hovered, setHovered] = useState('');
 	const profileRef = useRef<any>(null);
-	const { user, logout } = useAuthContext();
+	const { logout } = useAuthContext();
 
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent) {
@@ -94,14 +94,14 @@ function Bar({
 					<View style={styles.profileMenu}>
 						<Pressable style={styles.profileMenuItem} onPress={handleDeleteClick}>
 							<FontAwesome6 name="trash" style={styles.profileMenuItemDangerText} />
-							<AppText>Delete Account</AppText>
+							<AppText bold>Delete Account</AppText>
 						</Pressable>
 						<Pressable style={styles.profileMenuItem} onPress={handleLogout}>
 							<FontAwesome6
 								name="right-from-bracket"
 								style={styles.profileMenuItemDangerText}
 							/>
-							<AppText>Logout</AppText>
+							<AppText bold>Logout</AppText>
 						</Pressable>
 					</View>
 				)}
