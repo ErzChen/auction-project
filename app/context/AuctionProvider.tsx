@@ -1,90 +1,94 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getAuctions } from "../lib/auctionActions";
-import { getSocket } from "../lib/socket";
-import { AuctionContext } from "./AuctionContext";
-import { useAuthContext } from "./AuthContext";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { getAuctions } from '../lib/auctionActions';
+import { getSocket } from '../lib/socket';
+import { AuctionContext } from './AuctionContext';
+import { useAuthContext } from './AuthContext';
 
-const num_listings = 30
+const num_listings = 30;
 
-export function AuctionProvider({ children }) {
-    const [page, setPage] = useState(0);
-    const [keyword, setKeyword] = useState('');
-    const [auctions, setAuctions] = useState([]);
-    const [hasMore, setHasMore] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const { id: userId } = useAuthContext().user;
-    const socketRef = useRef(null);
-    if (socketRef.current === null) socketRef.current = getSocket();
-    const joinedRoomsRef = useRef(new Set());
+export function AuctionProvider({ children }: { children: React.ReactNode }) {
+	const [page, setPage] = useState(0);
+	const [keyword, setKeyword] = useState('');
+	const [auctions, setAuctions] = useState<Array<any>>([]);
 
-    const fetchAuctions = useCallback((keyword, pageNum) => {
-        setLoading(true);
-        setError(null);
+	const [hasMore, setHasMore] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const { user } = useAuthContext();
+	const userId = user?.id;
+	const socketRef = useRef<ReturnType<typeof getSocket> | null>(null);
+	if (socketRef.current === null) socketRef.current = getSocket();
+	const joinedRoomsRef = useRef(new Set());
 
-        getAuctions({
-            user_id: Number(userId),
-            keyword,
-            limit: num_listings + 1,
-            offset: pageNum * num_listings,
-        })
-            .then((results) => {
-                const list = results || [];
-                const hasMore = list.length == num_listings + 1;
-                setHasMore(hasMore);
-                setAuctions(hasMore ? list.slice(0, num_listings) : list);
-            })
-            .catch((err) => {
-                console.error('Failed to load auctions:', err)
-                setError('Could not load listings right now. Try again in a moment.')
-                setHasMore(false);
-                setAuctions([]);
-            })
-            .finally(() => setLoading(false));
-    }, []);
+	const fetchAuctions = useCallback((keyword: string, pageNum: number) => {
+		setLoading(true);
+		setError(null);
 
-    const prevPage = useCallback(() => {
-        const next = Math.max(0, page - 1);
-        if (next === page) return;
-        setPage(next);
-        fetchAuctions(keyword, next);
-    }, [page, keyword, fetchAuctions]);
+		getAuctions({
+			user_id: Number(userId),
+			keyword,
+			limit: num_listings + 1,
+			offset: pageNum * num_listings,
+		})
+			.then((results) => {
+				const list = results || [];
+				const hasMore = list.length == num_listings + 1;
+				setHasMore(hasMore);
+				setAuctions(hasMore ? list.slice(0, num_listings) : list);
+			})
+			.catch((err) => {
+				console.error('Failed to load auctions:', err);
+				setError('Could not load listings right now. Try again in a moment.');
+				setHasMore(false);
+				setAuctions([]);
+			})
+			.finally(() => setLoading(false));
+	}, []);
 
-    const nextPage = useCallback(() => {
-        if (!hasMore) return;
-        const next = page + 1;
-        setPage(next);
-        fetchAuctions(keyword, next);
-    }, [page, keyword, fetchAuctions, hasMore]);
+	const prevPage = useCallback(() => {
+		const next = Math.max(0, page - 1);
+		if (next === page) return;
+		setPage(next);
+		fetchAuctions(keyword, next);
+	}, [page, keyword, fetchAuctions]);
 
-    useEffect(() => {
-        setPage(0);
-       fetchAuctions(keyword, page);
-    }, [keyword]);
+	const nextPage = useCallback(() => {
+		if (!hasMore) return;
+		const next = page + 1;
+		setPage(next);
+		fetchAuctions(keyword, next);
+	}, [page, keyword, fetchAuctions, hasMore]);
 
-    useEffect(() => {
-        const socket = socketRef.current;
-        const currentIds = new Set(auctions.map((auction) => auction.auction_id));
+	useEffect(() => {
+		setPage(0);
+		fetchAuctions(keyword, page);
+	}, [keyword]);
 
-        for (const id of currentIds) {
-            if (!joinedRoomsRef.current.has(id)) {
-                socket.emit('join-auction', id, userId);
-                joinedRoomsRef.current.add(id);
-            }
-        }
-
-        for (const id of joinedRoomsRef.current) {
-            if (!currentIds.has(id)) {
-                socket.emit('leave-auction', id);
-                joinedRoomsRef.current.delete(id);
-            }
-        }
-    }, [auctions])
-
-    useEffect(() => {
+	useEffect(() => {
 		const socket = socketRef.current;
+		if (!socket) return;
+		const currentIds = new Set(auctions.map((auction) => auction.auction_id));
 
-		function updateAuction(auctionId, toUpdate) {
+		for (const id of currentIds) {
+			if (!joinedRoomsRef.current.has(id)) {
+				socket.emit('join-auction', id, userId);
+				joinedRoomsRef.current.add(id);
+			}
+		}
+
+		for (const id of joinedRoomsRef.current) {
+			if (!currentIds.has(id)) {
+				socket.emit('leave-auction', id);
+				joinedRoomsRef.current.delete(id);
+			}
+		}
+	}, [auctions]);
+
+	useEffect(() => {
+		const socket = socketRef.current;
+		if (!socket) return;
+
+		function updateAuction(auctionId: number, toUpdate: Record<string, any>) {
 			setAuctions((prev) =>
 				prev.map((auction) =>
 					auction.auction_id === auctionId ? { ...auction, ...toUpdate } : auction,
@@ -92,19 +96,27 @@ export function AuctionProvider({ children }) {
 			);
 		}
 
-        function handleDeleteAuction(auctionId) {
-            setAuctions((prev) => prev.filter((auction) => auction.auction_id != auctionId));
-        }
+		function handleDeleteAuction(auctionId: number) {
+			setAuctions((prev) =>
+				prev.filter((auction) => auction.auction_id != auctionId),
+			);
+		}
 
-		function handleNewBid(data) {
+		function handleNewBid(data: { auction_id: number; current_price: number }) {
 			updateAuction(data.auction_id, { current_price: data.current_price });
 		}
 
-		function handleBidCancelled(data) {
+		function handleBidCancelled(data: {
+			auction_id: number;
+			current_price: number;
+		}) {
 			updateAuction(data.auction_id, { current_price: data.current_price });
 		}
 
-		function handleUpdateStatus(data) {
+		function handleUpdateStatus(data: {
+			auction_id: number;
+			status: string;
+		}) {
 			setAuctions((prev) =>
 				prev.map((auction) =>
 					auction.auction_id === data.auction_id
@@ -116,13 +128,13 @@ export function AuctionProvider({ children }) {
 
 		socket.on('new-bid', handleNewBid);
 		socket.on('bid-cancelled', handleBidCancelled);
-        socket.on('delete-auction', handleDeleteAuction);
+		socket.on('delete-auction', handleDeleteAuction);
 		socket.on('update-auction-status', handleUpdateStatus);
 
 		return () => {
 			socket.off('new-bid', handleNewBid);
 			socket.off('bid-cancelled', handleBidCancelled);
-            socket.off('delete-auction', handleDeleteAuction);
+			socket.off('delete-auction', handleDeleteAuction);
 			socket.off('update-auction-status', handleUpdateStatus);
 
 			for (const id of joinedRoomsRef.current) {
@@ -132,7 +144,7 @@ export function AuctionProvider({ children }) {
 		};
 	}, []);
 
-    const value = useMemo(
+	const value = useMemo(
 		() => ({
 			auctions,
 			loading,
@@ -141,20 +153,11 @@ export function AuctionProvider({ children }) {
 			hasMore,
 			pageSize: num_listings,
 			keyword,
-            setKeyword,
+			setKeyword,
 			prevPage,
 			nextPage,
 		}),
-		[
-			auctions,
-			loading,
-			error,
-			page,
-			hasMore,
-			keyword,
-			prevPage,
-			nextPage,
-		],
+		[auctions, loading, error, page, hasMore, keyword, prevPage, nextPage],
 	);
 
 	return (

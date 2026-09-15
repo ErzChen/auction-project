@@ -37,7 +37,7 @@ export function ListingPage() {
 
 	function openPlaceBidModal() {
 		if (!user) {
-			window.location.href = '/pages/auth.html';
+			window.document.href = '/auth';
 			return;
 		}
 		setBidError(null);
@@ -150,7 +150,6 @@ export function ListingPage() {
 	const [preBid, setPreBid] = useState(undefined);
 	const [preBidSubmitting, setPreBidSubmitting] = useState(false);
 	const [preBidError, setPreBidError] = useState(null);
-
 	const { user } = useAuthContext();
 
 	const {
@@ -212,11 +211,11 @@ export function ListingPage() {
 		: bidAmount
 			? formatPrice(Number(bidAmount), currency)
 			: '';
-	const { username, email } = listingUser || {};
+	const { username, email, id: userId } = listingUser || {};
 
 	useEffect(() => {
 		let cancelled = false;
-		const id = 33;
+		const id = getIdFromUrl();
 
 		if (!id) return;
 
@@ -251,10 +250,10 @@ export function ListingPage() {
 		if (!auctionId) return;
 
 		const socket = socketRef.current;
-		socket.emit('join-auction', auctionId, user.id);
+		socket.emit('join-auction', auctionId, user ? user.id : 'none');
 
 		return () => socket.emit('leave-auction', auctionId);
-	}, [auction?.auction_id]);
+	}, [auction?.auction_id, user]);
 
 	useEffect(() => {
 		const socket = socketRef.current;
@@ -641,7 +640,9 @@ export function ListingPage() {
 								<div className="listing-info">
 									<span className="listing-info-item">
 										<i className="fa-solid fa-circle-user" aria-hidden="true"></i>
-										{username || 'Unknown seller'}
+										<a href={`/profile/${userId}`}>
+											{username || 'Unknown seller'}
+										</a>
 									</span>
 									<span className="listing-info-item">
 										<i className="fa-solid fa-envelope" aria-hidden="true"></i>

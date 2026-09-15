@@ -20,7 +20,6 @@ export function MainPage() {
 	);
 }
 
-
 createRoot(document.getElementById('root')).render(
 	<StrictMode>
 		<AuthProvider>
@@ -28,5 +27,5 @@ createRoot(document.getElementById('root')).render(
 				<MainPage />
 			</AuctionProvider>
 		</AuthProvider>
-	</StrictMode>
+	</StrictMode>,
 );

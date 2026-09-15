@@ -6,7 +6,7 @@ import { barStyles } from '../styles/bar';
 import { AuctionProvider } from '../context/AuctionProvider';
 import CreatePage from './CreatePage';
 import { Auction, HomeView } from '../constants/types';
-import { Pressable, View } from 'react-native';
+import { GestureResponderEvent, Pressable, View } from 'react-native';
 import { colors, vh, vw } from '../constants/theme';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { AppText } from '../components/AppText';
@@ -14,29 +14,26 @@ import { sharedStyles } from '../styles/shared';
 import { useAuthContext } from '../context/AuthContext';
 
 export default function MainPage() {
-	function handleCancel(e) {
+	function handleCancel(e: GestureResponderEvent) {
 		e.preventDefault();
 		setDeleteMenuOpen(false);
 	}
 
-	async function handleDelete(e) {
+	async function handleDelete(e: GestureResponderEvent) {
 		e.preventDefault();
-        try {
-            await fetch(
-                `${process.env.EXPO_PUBLIC_API_BASE}/api/delete`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY,
-                        Authorization: `Bearer ${token}`,
-                    }
-                },
-            );
-        } catch (err) {
-            console.error(err);
-        } finally {
-            logout();
-        }
+		try {
+			await fetch(`${process.env.EXPO_PUBLIC_API_BASE}/api/delete`, {
+				method: 'DELETE',
+				headers: {
+					'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY,
+					Authorization: `Bearer ${token}`,
+				},
+			});
+		} catch (err) {
+			console.error(err);
+		} finally {
+			logout();
+		}
 	}
 
 	const [view, setView] = useState<HomeView>({ mode: 'listings' });
@@ -48,8 +45,7 @@ export default function MainPage() {
 	const goCreate = () => setView({ mode: 'create' });
 	const goEdit = (auction: Auction) => setView({ mode: 'edit', auction });
 
-	const { user, token, logout } = useAuthContext();
-    const userId = user.id;
+	const { token, logout } = useAuthContext();
 
 	if (view.mode === 'create' || view.mode === 'edit') {
 		return (
@@ -114,7 +110,7 @@ export default function MainPage() {
 									]}
 									onHoverIn={() => setYesHover(true)}
 									onHoverOut={() => setYesHover(false)}
-                                    onPress={handleDelete}
+									onPress={handleDelete}
 								>
 									<AppText bold>Yes</AppText>
 								</Pressable>
@@ -128,7 +124,7 @@ export default function MainPage() {
 									]}
 									onHoverIn={() => setNoHover(true)}
 									onHoverOut={() => setNoHover(false)}
-                                    onPress={handleCancel}
+									onPress={handleCancel}
 								>
 									<AppText>No</AppText>
 								</Pressable>

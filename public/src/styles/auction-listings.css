@@ -139,6 +139,18 @@
 	color: var(--navy-text-muted);
 }
 
+.listing-info-item a {
+	all: unset;
+}
+
+.listing-info-item:hover {
+    cursor: pointer;
+}
+
+.listing-info-item:hover a {
+    text-decoration: underline;
+}
+
 .listing-info-item i {
 	font-size: 0.7rem;
 	color: var(--navy-text-sub);

@@ -6,228 +6,228 @@ body {
 }
 
 .help-page {
-    width: 100vw;
-    min-height: 90vh;
-    margin-top: 10vh;
-    box-sizing: border-box;
-    padding: 0 8vw 64px;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    margin-top: 32px;
+	width: 100vw;
+	min-height: 90vh;
+	margin-top: 10vh;
+	box-sizing: border-box;
+	padding: 0 8vw 64px;
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
+	margin-top: 32px;
 }
 
 .search-section {
-    margin-top: calc(10vh + 20px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    background-color: var(--navy);
-    padding: 56px 24px;
-    box-sizing: border-box;
+	margin-top: calc(10vh + 20px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	background-color: var(--navy);
+	padding: 56px 24px;
+	box-sizing: border-box;
 }
 
 .search-section h1 {
-    font-size: var(--heading-size);
-    color: var(--white-text-primary);
-    margin: 0 0 40px;
+	font-size: var(--heading-size);
+	color: var(--white-text-primary);
+	margin: 0 0 40px;
 }
 
 .search-subtitle {
-    font-size: var(--subtitle-size);
-    color: var(--white-text-body);
-    margin: 0 0 28px;
-    max-width: 46ch;
+	font-size: var(--subtitle-size);
+	color: var(--white-text-body);
+	margin: 0 0 28px;
+	max-width: 46ch;
 }
 
 .search-section .field {
-    margin-bottom: 0;
-    width: 100%;
-    max-width: 520px;
+	margin-bottom: 0;
+	width: 100%;
+	max-width: 520px;
 }
 
 .search-section .input-wrap {
-    height: 52px;
-    background-color: var(--bg);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+	height: 52px;
+	background-color: var(--bg);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 .search-section .input-icon {
-    font-size: var(--subtitle-size);
+	font-size: var(--subtitle-size);
 }
 
 .search-section input {
-    font-size: var(--subtitle-size) !important;
+	font-size: var(--subtitle-size) !important;
 }
 
 .section-heading {
-    font-size: var(--title-size);
-    color: var(--navy);
-    margin: 0 0 16px;
+	font-size: var(--title-size);
+	color: var(--navy);
+	margin: 0 0 16px;
 }
 
 /* ------- Category grid ------- */
 
 .category-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
 }
 
 .category-card {
-    all: unset;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 20px;
-    background-color: var(--bg);
-    border: 1px solid var(--surface);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: border-color 0.2s ease;
+	all: unset;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 20px;
+	background-color: var(--bg);
+	border: 1px solid var(--surface);
+	border-radius: var(--border-radius);
+	cursor: pointer;
+	transition: border-color 0.2s ease;
 }
 
 .category-card:hover {
-    border-color: var(--init);
+	border-color: var(--init);
 }
 
 .category-icon {
-    font-size: var(--title-size);
-    color: var(--init);
+	font-size: var(--title-size);
+	color: var(--init);
 }
 
 .category-title {
-    font-size: var(--subtitle-size);
-    color: var(--navy);
-    margin: 4px 0 0;
+	font-size: var(--subtitle-size);
+	color: var(--navy);
+	margin: 4px 0 0;
 }
 
 .category-description {
-    font-size: var(--body-size);
-    color: var(--navy-text-body);
-    margin: 0;
-    line-height: 1.5;
+	font-size: var(--body-size);
+	color: var(--navy-text-body);
+	margin: 0;
+	line-height: 1.5;
 }
 
 .category-count {
-    font-size: var(--body-size);
-    color: var(--navy-text-muted);
-    margin-top: 4px;
+	font-size: var(--body-size);
+	color: var(--navy-text-muted);
+	margin-top: 4px;
 }
 
 /* ------- Popular articles / FAQ columns ------- */
 
 .help-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 40px;
 }
 
 .article-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
 .list-item {
-    background-color: var(--bg);
-    border-radius: var(--border-radius);
-    padding: 0 12px;
+	background-color: var(--bg);
+	border-radius: var(--border-radius);
+	padding: 0 12px;
 }
 
 .article-link {
-    all: unset;
-    box-sizing: border-box;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 4px;
-    font-size: var(--label-size);
-    color: var(--navy-text-body);
-    cursor: pointer;
+	all: unset;
+	box-sizing: border-box;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 4px;
+	font-size: var(--label-size);
+	color: var(--navy-text-body);
+	cursor: pointer;
 }
 
 .article-link:hover {
-    color: var(--navy);
+	color: var(--navy);
 }
 
 .article-link i {
-    font-size: var(--body-size);
-    color: var(--navy-text-muted);
+	font-size: var(--body-size);
+	color: var(--navy-text-muted);
 }
 
 .faq-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 
 .faq-item {
-    border-bottom: 1px solid var(--bg);
-    padding: 12px 4px;
+	border-bottom: 1px solid var(--bg);
+	padding: 12px 4px;
 }
 
 .faq-question {
-    font-size: var(--label-size);
-    font-weight: 700;
-    color: var(--navy);
-    cursor: pointer;
-    list-style: none;
+	font-size: var(--label-size);
+	font-weight: 700;
+	color: var(--navy);
+	cursor: pointer;
+	list-style: none;
 }
 
 .faq-question::-webkit-details-marker {
-    display: none;
+	display: none;
 }
 
 .faq-answer {
-    font-size: var(--body-size);
-    color: var(--navy-text-body);
-    line-height: 1.6;
-    margin: 10px 0 0;
+	font-size: var(--body-size);
+	color: var(--navy-text-body);
+	line-height: 1.6;
+	margin: 10px 0 0;
 }
 
 /* ------- Contact card ------- */
 
 .contact-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    padding: 28px;
-    background-color: var(--navy);
-    border-radius: var(--border-radius);
-    box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	padding: 28px;
+	background-color: var(--navy);
+	border-radius: var(--border-radius);
+	box-sizing: border-box;
 }
 
 .contact-copy .section-heading {
-    color: var(--white-text-primary);
-    margin-bottom: 8px;
+	color: var(--white-text-primary);
+	margin-bottom: 8px;
 }
 
 .contact-description {
-    font-size: var(--label-size);
-    color: var(--white-text-body);
-    margin: 0;
-    max-width: 46ch;
+	font-size: var(--label-size);
+	color: var(--white-text-body);
+	margin: 0;
+	max-width: 46ch;
 }
 
 .contact-actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	flex-shrink: 0;
 }
 
 .contact-actions .submit {
-    padding: 0 24px;
+	padding: 0 24px;
 }
 
 .contact-actions .link {
-    color: var(--white-text-primary);
+	color: var(--white-text-primary);
 }

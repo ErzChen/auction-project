@@ -9,39 +9,34 @@ import { vh } from '../constants/theme';
 
 export function AuctionSearch() {
 	const [focused, setFocused] = useState(false);
-	const keywordRef = useRef(null);
-    const { keyword, setKeyword } = useAuctionContext();
+	const keywordRef = useRef<any>(null);
+	const { keyword, setKeyword } = useAuctionContext();
 
-    const hasKeyword = keyword.length > 0;
+	const hasKeyword = keyword.length > 0;
 
 	return (
 		<View style={[styles.bar, { height: vh(10) }]}>
-			<View style={[sharedStyles.field, { marginBottom: 0, width: "90%" }]}>
-				<Pressable 
-                    style={[
-                        sharedStyles.inputWrap,
-                        focused && sharedStyles.inputWrapFocused,
-                    ]}
-                    onPress={() => keywordRef.current?.focus()}
-                >
+			<View style={[sharedStyles.field, { marginBottom: 0, width: '90%' }]}>
+				<Pressable
+					style={[sharedStyles.inputWrap, focused && sharedStyles.inputWrapFocused]}
+					onPress={() => keywordRef.current?.focus()}
+				>
 					<FontAwesome6 name="magnifying-glass" style={sharedStyles.inputIcon} />
 					<AppTextInput
 						ref={keywordRef}
 						style={sharedStyles.inputControl}
-                        value={keyword}
-                        onChangeText={setKeyword}
-                        placeholder='Search keywords...'
-                        autoCapitalize='none'
-                        onFocus={() => setFocused(true)}
+						value={keyword}
+						onChangeText={setKeyword}
+						placeholder="Search keywords..."
+						autoCapitalize="none"
+						onFocus={() => setFocused(true)}
 						onBlur={() => setFocused(false)}
 					/>
-                    {hasKeyword && (
-                        <Pressable
-                            onPress={() => setKeyword('')}
-                        >
-					        <FontAwesome6 name="xmark" style={sharedStyles.inputIcon} />
-                        </Pressable>
-                    )}
+					{hasKeyword && (
+						<Pressable onPress={() => setKeyword('')}>
+							<FontAwesome6 name="xmark" style={sharedStyles.inputIcon} />
+						</Pressable>
+					)}
 				</Pressable>
 			</View>
 		</View>

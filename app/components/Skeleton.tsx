@@ -12,11 +12,11 @@ import { StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../constants/theme';
 
-export function Skeleton({ style }) {
+export function Skeleton({ style }: { style?: any }) {
 	const translateX = useSharedValue(0);
 	const [containerWidth, setContainerWidth] = useState(0);
 
-	const onLayout = useCallback((e) => {
+	const onLayout = useCallback((e: any) => {
 		setContainerWidth(e.nativeEvent.layout.width);
 	}, []);
 

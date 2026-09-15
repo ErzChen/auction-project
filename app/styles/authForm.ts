@@ -2,72 +2,72 @@ import { StyleSheet } from 'react-native';
 import { colors, fontSizes } from '../constants/theme';
 
 export const authFormStyles = StyleSheet.create({
-  panel: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 40,
-    backgroundColor: colors.bg,
-  },
-  card: {
-    width: '100%',
-    maxWidth: 420,
-  },
-  tabs: {
-    flexDirection: 'row',
-    marginBottom: 32,
-    borderBottomWidth: 2,
-    borderBottomColor: colors.surface,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    cursor: 'pointer',
-  },
-  tabText: {
-    fontWeight: '900',
-    fontSize: fontSizes.subtitle,
-    letterSpacing: 0.3,
-    color: colors.navyTextMuted,
-  },
-  tabTextActive: {
-    color: colors.navy,
-  },
-  tabTextHover: {
-    color: colors.navyHover,
-  },
-  tabIndicator: {
-    position: 'absolute',
-    bottom: -2,
-    left: 0,
-    width: '50%',
-    height: 2,
-    backgroundColor: colors.init,
-  },
-  form: {},
-  formHeading: {
-    marginBottom: 6,
-    fontWeight: '800',
-    fontSize: fontSizes.title,
-    color: colors.navy,
-  },
-  formSubtext: {
-    marginBottom: 28,
-    fontWeight: '700',
-    fontSize: fontSizes.label,
-    color: colors.navyTextMuted,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 18,
-  },
-  switchLine: {
-    marginTop: 10,
-    textAlign: 'center',
-    fontSize: fontSizes.label,
-    color: colors.navyTextMuted,
-  },
+	panel: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 40,
+		backgroundColor: colors.bg,
+	},
+	card: {
+		width: '100%',
+		maxWidth: 420,
+	},
+	tabs: {
+		flexDirection: 'row',
+		marginBottom: 32,
+		borderBottomWidth: 2,
+		borderBottomColor: colors.surface,
+	},
+	tab: {
+		flex: 1,
+		paddingVertical: 12,
+		alignItems: 'center',
+		cursor: 'pointer',
+	},
+	tabText: {
+		fontWeight: '900',
+		fontSize: fontSizes.subtitle,
+		letterSpacing: 0.3,
+		color: colors.navyTextMuted,
+	},
+	tabTextActive: {
+		color: colors.navy,
+	},
+	tabTextHover: {
+		color: colors.navyHover,
+	},
+	tabIndicator: {
+		position: 'absolute',
+		bottom: -2,
+		left: 0,
+		width: '50%',
+		height: 2,
+		backgroundColor: colors.init,
+	},
+	form: {},
+	formHeading: {
+		marginBottom: 6,
+		fontWeight: '800',
+		fontSize: fontSizes.title,
+		color: colors.navy,
+	},
+	formSubtext: {
+		marginBottom: 28,
+		fontWeight: '700',
+		fontSize: fontSizes.label,
+		color: colors.navyTextMuted,
+	},
+	row: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginBottom: 18,
+	},
+	switchLine: {
+		marginTop: 10,
+		textAlign: 'center',
+		fontSize: fontSizes.label,
+		color: colors.navyTextMuted,
+	},
 });

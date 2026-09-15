@@ -1,8 +1,8 @@
 /* ------- Top Bar ------- */
 
 .top-bar {
-    display: flex;
-    flex-direction: row;
+	display: flex;
+	flex-direction: row;
 	width: 100vw;
 	height: 10vh;
 	background-color: var(--navy);
@@ -49,7 +49,9 @@
 	letter-spacing: 0.02em;
 	text-decoration: none;
 	cursor: pointer;
-	transition: color 0.2s ease, background-color 0.2s ease;
+	transition:
+		color 0.2s ease,
+		background-color 0.2s ease;
 }
 
 .nav-button span {
@@ -96,8 +98,8 @@
 }
 
 .user-profile {
-    font-size: 30cqw;
-    color: var(--white-text-muted);  
+	font-size: 30cqw;
+	color: var(--white-text-muted);
 }
 
 .profile-menu {
@@ -127,7 +129,9 @@
 	color: var(--navy-text-body);
 	cursor: pointer;
 	box-sizing: border-box;
-	transition: background-color 0.2s ease, color 0.2s ease;
+	transition:
+		background-color 0.2s ease,
+		color 0.2s ease;
 }
 
 .profile-menu-item i {

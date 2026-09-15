@@ -1,5 +1,4 @@
 import express from 'express';
-import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
@@ -14,7 +13,7 @@ import {
 import db from '../middleware/db.js';
 import { authenticate } from '../middleware/auth.js';
 import { CATEGORIES, CURRENCIES, DB_DIR, STATUSES } from '../config.js';
-import { deleteImageFiles } from '../middleware/uploads.js';
+import { deleteImageFiles, upload } from '../middleware/uploads.js';
 
 const router = express.Router();
 

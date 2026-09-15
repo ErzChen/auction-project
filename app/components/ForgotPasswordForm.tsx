@@ -6,7 +6,11 @@ import { FontAwesome } from '@expo/vector-icons';
 import { authFormStyles as styles } from '../styles/authForm';
 import { sharedStyles } from '../styles/shared';
 
-export function ForgotPasswordForm({ onBackToSignIn }) {
+export function ForgotPasswordForm({
+	onBackToSignIn,
+}: {
+	onBackToSignIn: () => void;
+}) {
 	async function handleSubmit() {
 		if (!email) {
 			setError('Please enter your email');
@@ -16,14 +20,17 @@ export function ForgotPasswordForm({ onBackToSignIn }) {
 		setSubmitting(true);
 		setError(null);
 		try {
-			const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE}/api/forgot-password`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY,
+			const res = await fetch(
+				`${process.env.EXPO_PUBLIC_API_BASE}/api/forgot-password`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY,
+					},
+					body: JSON.stringify({ email }),
 				},
-				body: JSON.stringify({ email }),
-			});
+			);
 			if (!res.ok) {
 				const data = await res.json().catch(() => ({}));
 				setError(data.message || 'Something went wrong');

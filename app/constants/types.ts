@@ -3,10 +3,23 @@ import { Dispatch, SetStateAction } from 'react';
 export type AuthContextType = {
 	user: User | null;
 	setUser: Dispatch<SetStateAction<User | null>>;
-	token: string;
-	saveSession: (user, token) => Promise<void>;
+	token: string | null;
+	saveSession: (user: User, token: string) => Promise<void>;
 	loading: boolean;
 	logout: () => Promise<void>;
+};
+
+export type AuctionContextType = {
+	auctions: any[];
+	loading: boolean;
+	error: string | null;
+	page: number;
+	hasMore: boolean;
+	pageSize: number;
+	keyword: string;
+	setKeyword: (k: string) => void;
+	prevPage: () => void;
+	nextPage: () => void;
 };
 
 export type User = {
@@ -53,6 +66,26 @@ export type Auction = {
 	updated_at: string;
 	deleted: boolean;
 	deleted_at: string | null;
+};
+
+export type FormIncrements = {
+	id: string;
+	min: string;
+	max: string;
+	increment: string;
+};
+
+export type FormDetails = {
+	id: string;
+	detail: string;
+	info: string;
+};
+
+export type BidIncrementRules = {
+	id: number;
+	min: number;
+	max?: number;
+	increment: number;
 };
 
 export type HomeView =

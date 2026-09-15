@@ -15,9 +15,15 @@ import { createPageStyles as styles } from '../styles/createPage';
 import { sharedStyles } from '../styles/shared';
 import { auctionListingsStyles as cardStyles } from '../styles/auctionListings';
 import { colors } from '../constants/theme';
-import { formatDate, formatPrice } from '../lib/library';
+import { formatDate, formatPrice, toDateTimeLocal } from '../lib/library';
 import { getImageUrl } from '../lib/auctionActions';
-import { ImageItem } from '../constants/types';
+import {
+	Auction,
+	BidIncrementRules,
+	FormDetails,
+	FormIncrements,
+	ImageItem,
+} from '../constants/types';
 
 const CATEGORIES = [
 	'Electronics',
@@ -44,17 +50,15 @@ function emptyDetail() {
 	return { id: nextId(), detail: '', info: '' };
 }
 
-function toDateTimeLocal(value?: string | null) {
-	if (!value) return '';
-	const date = new Date(value);
-	if (Number.isNaN(date.getTime())) return '';
-	const pad = (n: number) => String(n).padStart(2, '0');
-	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
-		date.getHours(),
-	)}:${pad(date.getMinutes())}`;
-}
-
-export default function CreatePage({ auction, onCreated, onCancel }) {
+export default function CreatePage({
+	auction,
+	onCreated,
+	onCancel,
+}: {
+	auction: Auction | undefined;
+	onCreated: () => void;
+	onCancel?: () => void;
+}) {
 	async function handleSubmit() {
 		const validationError = validate();
 		if (validationError) {
@@ -84,7 +88,7 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 		const basePayload = {
 			starting_price: isEditing ? auction!.starting_price : Number(startingPrice),
 			bid_increment_rules: JSON.stringify(
-				increments.map((row) => ({
+				increments.map((row: { min: string; max: string; increment: string }) => ({
 					min: Number(row.min),
 					max: row.max === '' ? null : Number(row.max),
 					increment: Number(row.increment),
@@ -95,7 +99,10 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 			description: description.trim() || null,
 			condition,
 			details: JSON.stringify(
-				details.filter((row) => row.detail.trim() || row.info.trim()),
+				details.filter(
+					(row: { detail: string; info: string }) =>
+						row.detail.trim() || row.info.trim(),
+				),
 			),
 			category,
 			image_paths: JSON.stringify(finalImagePaths),
@@ -130,8 +137,7 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 				setError(data.message || 'Something went wrong');
 				return;
 			}
-			const savedAuction = await res.json();
-			onCreated?.(savedAuction);
+			onCreated();
 		} catch {
 			setError('Something went wrong');
 		} finally {
@@ -242,29 +248,29 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 		field: 'min' | 'max' | 'increment',
 		value: string,
 	) {
-		setIncrements((prev) =>
+		setIncrements((prev: Array<FormIncrements>) =>
 			prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
 		);
 	}
 	function addIncrement() {
-		setIncrements((prev) => [...prev, emptyIncrement()]);
+		setIncrements((prev: Array<FormIncrements>) => [...prev, emptyIncrement()]);
 	}
 	function removeIncrement(id: string) {
-		setIncrements((prev) =>
+		setIncrements((prev: Array<FormIncrements>) =>
 			prev.length > 1 ? prev.filter((row) => row.id !== id) : prev,
 		);
 	}
 
 	function updateDetail(id: string, field: 'detail' | 'info', value: string) {
-		setDetails((prev) =>
+		setDetails((prev: Array<FormDetails>) =>
 			prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
 		);
 	}
 	function addDetail() {
-		setDetails((prev) => [...prev, emptyDetail()]);
+		setDetails((prev: Array<FormDetails>) => [...prev, emptyDetail()]);
 	}
 	function removeDetail(id: string) {
-		setDetails((prev) =>
+		setDetails((prev: Array<FormDetails>) =>
 			prev.length > 1 ? prev.filter((row) => row.id !== id) : prev,
 		);
 	}
@@ -342,7 +348,8 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 			new Date(auction!.end_time).getTime() <= Date.now());
 
 	const { user, token } = useAuthContext();
-	const { id: userId, username } = user;
+	const userId = user?.id;
+	const username = user?.username;
 
 	const [deleting, setDeleting] = useState(false);
 	const [title, setTitle] = useState(auction?.title || '');
@@ -352,7 +359,7 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 	const [categoryOpen, setCategoryOpen] = useState(false);
 	const [images, setImages] = useState<Array<ImageItem>>(() =>
 		auction
-			? JSON.parse(auction.image_paths || '[]').map((path) => ({
+			? JSON.parse(auction.image_paths || '[]').map((path: string) => ({
 					id: nextId(),
 					uri: getImageUrl(path),
 					path,
@@ -390,7 +397,9 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 	const [locationVerified, setLocationVerified] = useState(
 		Boolean(auction?.location),
 	);
-	const [locationSuggestions, setLocationSuggestions] = useState([]);
+	const [locationSuggestions, setLocationSuggestions] = useState<
+		{ id: string; text: string }[]
+	>([]);
 	const [locationLoading, setLocationLoading] = useState(false);
 	const locationDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const [pickupDescription, setPickupDescription] = useState(
@@ -537,7 +546,7 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 							<View style={cardStyles.priceBlock}>
 								<AppText style={cardStyles.priceLabel}>Starting at</AppText>
 								<AppText bold style={cardStyles.priceValue}>
-									{formatPrice(startingPrice, currency)}
+									{formatPrice(Number(startingPrice), currency)}
 								</AppText>
 							</View>
 							<View style={cardStyles.viewBtn}>
@@ -799,7 +808,7 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 								<View style={{ width: 34 }} />
 							</View>
 							<View style={{ gap: 16 }}>
-								{increments.map((row) => (
+								{increments.map((row: BidIncrementRules) => (
 									<View key={row.id} style={styles.dynamicRow}>
 										<View
 											style={[
@@ -812,8 +821,8 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 										>
 											<AppTextInput
 												style={sharedStyles.inputControl}
-												value={row.min}
-												onChangeText={(t) => updateIncrement(row.id, 'min', t)}
+												value={String(row.min)}
+												onChangeText={(t) => updateIncrement(String(row.id), 'min', t)}
 												placeholder="0"
 												keyboardType="numeric"
 												onFocus={() => setFocusedField(`increment-${row.id}-min`)}
@@ -831,8 +840,8 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 										>
 											<AppTextInput
 												style={sharedStyles.inputControl}
-												value={row.max}
-												onChangeText={(t) => updateIncrement(row.id, 'max', t)}
+												value={String(row.max)}
+												onChangeText={(t) => updateIncrement(String(row.id), 'max', t)}
 												placeholder="No limit"
 												keyboardType="numeric"
 												onFocus={() => setFocusedField(`increment-${row.id}-max`)}
@@ -850,17 +859,17 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 										>
 											<AppTextInput
 												style={sharedStyles.inputControl}
-												value={row.increment}
-												onChangeText={(t) => updateIncrement(row.id, 'increment', t)}
+												value={String(row.increment)}
+												onChangeText={(t) => updateIncrement(String(row.id), 'increment', t)}
 												placeholder="0"
 												keyboardType="numeric"
-												onFocus={() => setFocusedField(`increment-${row.id}-increment`)}
+												onFocus={() => setFocusedField(`increment-${String(row.id)}-increment`)}
 												onBlur={() => setFocusedField(null)}
 											/>
 										</View>
 										<Pressable
 											style={styles.dynamicRemoveBtn}
-											onPress={() => removeIncrement(row.id)}
+											onPress={() => removeIncrement(String(row.id))}
 										>
 											<FontAwesome6 name="xmark" style={styles.dynamicRemoveIcon} />
 										</Pressable>
@@ -890,7 +899,7 @@ export default function CreatePage({ auction, onCreated, onCancel }) {
 						<AppText style={styles.sectionHint}>
 							Optional specs buyers care about, like storage or dimensions.
 						</AppText>
-						{details.map((row) => (
+						{details.map((row: FormDetails) => (
 							<View key={row.id} style={styles.dynamicRow}>
 								<View
 									style={[

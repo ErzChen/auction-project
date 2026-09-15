@@ -8,7 +8,7 @@ import { AuthProvider } from './context/AuthProvider';
 const Stack = createNativeStackNavigator();
 
 function RootNavigation() {
-	const { user } = useAuthContext(); 
+	const { user } = useAuthContext();
 
 	return (
 		<Stack.Navigator id={undefined} screenOptions={{ headerShown: false }}>

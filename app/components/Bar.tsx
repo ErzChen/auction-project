@@ -1,17 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import { barStyles as styles } from '../styles/bar';
-import { Image, Pressable, View } from 'react-native';
+import { GestureResponderEvent, Image, Pressable, View } from 'react-native';
 import { AppText } from './AppText';
 import { FontAwesome6 } from '@expo/vector-icons';
 
-function Bar({ onHome, onAdd, setDeleteMenuOpen }) {
-	function handleProfileClick(e) {
+function Bar({
+	onHome,
+	onAdd,
+	setDeleteMenuOpen,
+}: {
+	onHome: () => void;
+	onAdd: () => void;
+	setDeleteMenuOpen: (open: boolean) => void;
+}) {
+	function handleProfileClick(e: GestureResponderEvent) {
 		e.preventDefault();
 		setMenuOpen((prev) => !prev);
 	}
 
-	function handleDeleteClick(e) {
+	function handleDeleteClick(e: GestureResponderEvent) {
 		e.preventDefault();
 		setDeleteMenuOpen(true);
 		setMenuOpen(false);
@@ -24,12 +32,12 @@ function Bar({ onHome, onAdd, setDeleteMenuOpen }) {
 
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [hovered, setHovered] = useState('');
-	const profileRef = useRef(null);
+	const profileRef = useRef<any>(null);
 	const { user, logout } = useAuthContext();
 
 	useEffect(() => {
-		function handleClickOutside(e) {
-			if (profileRef.current && !profileRef.current.contains(e.target)) {
+		function handleClickOutside(e: MouseEvent) {
+			if (profileRef.current && !(profileRef.current as any).contains(e.target)) {
 				setMenuOpen(false);
 			}
 		}
@@ -85,10 +93,7 @@ function Bar({ onHome, onAdd, setDeleteMenuOpen }) {
 				{menuOpen && (
 					<View style={styles.profileMenu}>
 						<Pressable style={styles.profileMenuItem} onPress={handleDeleteClick}>
-							<FontAwesome6
-								name="trash"
-								style={styles.profileMenuItemDangerText}
-							/>
+							<FontAwesome6 name="trash" style={styles.profileMenuItemDangerText} />
 							<AppText>Delete Account</AppText>
 						</Pressable>
 						<Pressable style={styles.profileMenuItem} onPress={handleLogout}>

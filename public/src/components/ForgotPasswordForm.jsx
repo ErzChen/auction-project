@@ -44,7 +44,10 @@ export function ForgotPasswordForm({ onBackToSignIn }) {
 				{sent ? (
 					<div className="auth-form">
 						<h1>Check your email</h1>
-						<p>If an account exists for that address, we've sent a link to reset your password.</p>
+						<p>
+							If an account exists for that address, we've sent a link to reset your
+							password.
+						</p>
 						<button type="button" className="submit" onClick={onBackToSignIn}>
 							Back to sign in
 						</button>
@@ -57,7 +60,12 @@ export function ForgotPasswordForm({ onBackToSignIn }) {
 							<span>Email</span>
 							<span className="input-wrap">
 								<i className="fa-solid fa-envelope input-icon" aria-hidden="true"></i>
-								<input key="email" type="email" name="email" placeholder="example@example.com" />
+								<input
+									key="email"
+									type="email"
+									name="email"
+									placeholder="example@example.com"
+								/>
 							</span>
 						</label>
 						{error && <p className="error-text">{error}</p>}

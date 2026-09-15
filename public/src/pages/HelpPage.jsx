@@ -1,5 +1,4 @@
 import { StrictMode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import '../styles/help-page.css';
 import '../styles/themes.css';
@@ -17,10 +16,7 @@ export function HelpPage() {
 							className="fa-solid fa-magnifying-glass input-icon"
 							aria-hidden="true"
 						></i>
-						<input
-							type="search"
-							placeholder="Search for pages…"
-						/>
+						<input type="search" placeholder="Search for pages…" />
 					</span>
 				</label>
 			</section>
@@ -171,8 +167,6 @@ export function HelpPage() {
 
 createRoot(document.getElementById('root')).render(
 	<StrictMode>
-		<BrowserRouter>
-			<HelpPage />
-		</BrowserRouter>
+		<HelpPage />
 	</StrictMode>,
 );

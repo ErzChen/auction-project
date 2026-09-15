@@ -12,47 +12,48 @@ import { getIdFromUrl } from '../lib/library.js';
 import { getUser } from '../lib/userActions.js';
 
 export function ProfilePage() {
-    const [id] = useState(getIdFromUrl());
-    const [user, setUser] = useState(null);
-    const [error, setError] = useState(null);
+	const [id] = useState(getIdFromUrl());
+	const [user, setUser] = useState(null);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
-        if (!id) return; 
+		if (!id) return;
 
-        let cancelled = false;
+		let cancelled = false;
 
-        getUser(id).then((data) => {
-            if (cancelled) return;
-            const user = data ? data : null;
-            setUser(user);
-            if (!user) setError('Profile not found');
-        })
-        .catch((err) => {
-            console.error('Failed to load profile:', err);
-            if (!cancelled) setError('Could not load this profile right now.');
-        })
+		getUser(id)
+			.then((data) => {
+				if (cancelled) return;
+				const user = data ? data : null;
+				setUser(user);
+				if (!user) setError('Profile not found');
+				else document.title = `${user.username}'s Profile | Erz's Auction`;
+			})
+			.catch((err) => {
+				console.error('Failed to load profile:', err);
+				if (!cancelled) setError('Could not load this profile right now.');
+			});
 
-
-        return () => {
-            cancelled = true;
-        };
-    }, [id]);
+		return () => {
+			cancelled = true;
+		};
+	}, [id]);
 
 	return (
 		<>
 			<TopBar />
-            {user ? (
-                <AuctionProvider initialFilters={{ ...DEFAULT_FILTERS, user_id: user.id }}>
-                    <section className="profile-page">
-                        <AuctionFilter userId={user.id} />
-                        <AuctionListing user={user} />
-                    </section>
-                </AuctionProvider>
-            ) : (
-                <div className="status-page">
-                    <p className="error-text page-status">{error || 'Profile not found.'}</p>
-                </div>
-            )}
+			{user ? (
+				<AuctionProvider initialFilters={{ ...DEFAULT_FILTERS, user_id: user.id }}>
+					<section className="profile-page">
+						<AuctionFilter userId={user.id} />
+						<AuctionListing user={user} />
+					</section>
+				</AuctionProvider>
+			) : (
+				<div className="status-page">
+					<p className="error-text page-status">{error || 'Profile not found.'}</p>
+				</div>
+			)}
 		</>
 	);
 }

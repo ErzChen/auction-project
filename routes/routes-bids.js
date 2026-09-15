@@ -48,14 +48,22 @@ router.post('/api/bids', authenticate, async (req, res) => {
 
 		const auction = getAuctionById.get(auction_id);
 		if (!auction) return res.status(404).json({ message: 'Auction not found' });
-		if (auction.status !== 'active') return res.status(400).json({ message: 'This auction is not open for bidding' });
-		if (new Date(auction.end_time).getTime() < Date.now()) return res.status(400).json({ message: 'This auction has already ended' });
-		if (auction.user_id === user_id) return res.status(403).json({ message: 'You cannot bid on your own listing' });
+		if (auction.status !== 'active')
+			return res
+				.status(400)
+				.json({ message: 'This auction is not open for bidding' });
+		if (new Date(auction.end_time).getTime() < Date.now())
+			return res.status(400).json({ message: 'This auction has already ended' });
+		if (auction.user_id === user_id)
+			return res
+				.status(403)
+				.json({ message: 'You cannot bid on your own listing' });
 
 		const rules = JSON.parse(auction.bid_increment_rules || '[]');
 		const minBid =
 			auction.current_price + incrementFor(rules, auction.current_price);
-		if (bidAmount < minBid) return res.status(422).json({ message: `Bid must be at least ${minBid}` });
+		if (bidAmount < minBid)
+			return res.status(422).json({ message: `Bid must be at least ${minBid}` });
 
 		const placeBid = db.transaction(() => {
 			clearWinningBids.run(auction_id);
@@ -72,10 +80,12 @@ router.post('/api/bids', authenticate, async (req, res) => {
 
 		const bidId = placeBid();
 
-        getIo().to(`auction:${auction_id}`).emit('new-bid', {
-            bid: getBidById.get(bidId),
-            current_price: bidAmount,
-        });
+		getIo()
+			.to(`auction:${auction_id}`)
+			.emit('new-bid', {
+				bid: getBidById.get(bidId),
+				current_price: bidAmount,
+			});
 		res.status(200).json({ message: 'Bid successful', bid_id: bidId });
 	} catch (err) {
 		console.error('Error creating bid:', err);
@@ -115,15 +125,17 @@ router.put('/api/bids/:bid_id/cancel', authenticate, async (req, res) => {
 			}
 			updateAuctionCurrentPrice.run(newPrice, bid.auction_id);
 
-			return newPrice; 
+			return newPrice;
 		});
 
-		const newPrice = cancelAndRecalculate(); 
+		const newPrice = cancelAndRecalculate();
 
-		getIo().to(`auction:${bid.auction_id}`).emit('bid-cancelled', {
-			bid_id: Number(bid_id),
-			current_price: newPrice,
-		});
+		getIo()
+			.to(`auction:${bid.auction_id}`)
+			.emit('bid-cancelled', {
+				bid_id: Number(bid_id),
+				current_price: newPrice,
+			});
 
 		res.status(200).json({ message: 'Cancel successful' });
 	} catch (err) {

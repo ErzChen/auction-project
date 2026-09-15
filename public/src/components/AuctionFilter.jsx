@@ -28,11 +28,13 @@ export function AuctionFilter({ userId = null }) {
 		...DEFAULT_FILTERS,
 		user_id: userId || null,
 	});
-	const [locationStatus, setLocationStatus] = useState('idle'); 
+	const [locationStatus, setLocationStatus] = useState('idle');
 
 	const hasFilters =
 		pendingFilters.statuses.length !== DEFAULT_FILTERS.statuses.length ||
-		!DEFAULT_FILTERS.statuses.every((status) => pendingFilters.statuses.includes(status)) ||
+		!DEFAULT_FILTERS.statuses.every((status) =>
+			pendingFilters.statuses.includes(status),
+		) ||
 		pendingFilters.category !== DEFAULT_FILTERS.category ||
 		pendingFilters.keyword !== DEFAULT_FILTERS.keyword ||
 		pendingFilters.start_price !== DEFAULT_FILTERS.start_price ||
@@ -66,12 +68,19 @@ export function AuctionFilter({ userId = null }) {
 
 	function handleApply(e) {
 		e.preventDefault();
-		const hasDistance = pendingFilters.lat != null && pendingFilters.lng != null && pendingFilters.radius;
+		const hasDistance =
+			pendingFilters.lat != null &&
+			pendingFilters.lng != null &&
+			pendingFilters.radius;
 		applyFilters({
 			...pendingFilters,
 			...(hasDistance
 				? {}
-				: { lat: DEFAULT_FILTERS.lat, lng: DEFAULT_FILTERS.lng, radius: DEFAULT_FILTERS.radius }),
+				: {
+						lat: DEFAULT_FILTERS.lat,
+						lng: DEFAULT_FILTERS.lng,
+						radius: DEFAULT_FILTERS.radius,
+					}),
 			user_id: userId || null,
 		});
 	}
@@ -204,10 +213,18 @@ export function AuctionFilter({ userId = null }) {
 						</button>
 					</div>
 					{locationStatus === 'done' && pendingFilters.lat != null && (
-						<span className="status-text" style={{ textTransform: 'none', textAlign: 'center', marginTop: '18px' }}>Location set</span>
+						<span
+							className="status-text"
+							style={{ textTransform: 'none', textAlign: 'center', marginTop: '18px' }}
+						>
+							Location set
+						</span>
 					)}
 					{locationStatus === 'error' && (
-						<span className="status-text error-text" style={{ textTransform: 'none', textAlign: 'center', marginTop: '18px' }}>
+						<span
+							className="status-text error-text"
+							style={{ textTransform: 'none', textAlign: 'center', marginTop: '18px' }}
+						>
 							Couldn't get your location, check browser permissions.
 						</span>
 					)}

@@ -22,6 +22,7 @@ export let PORT = process.env.PORT;
 export let FRONTEND_URL = process.env.FRONTEND_URL;
 export let APPLICATION_SECRET_KEY = process.env.APPLICATION_SECRET_KEY;
 export let JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+export let FRONTEND_DIST_DIR = process.env.FRONTEND_DIST_DIR;
 
 if (!DB_DIR) {
 	DB_DIR = './database';
@@ -58,6 +59,17 @@ if (!JWT_SECRET_KEY) {
 	JWT_SECRET_KEY = 'generatedRandomHexString';
 	console.error('JWT_SECRET_KEY environment variable is not set');
 }
+
+if (!FRONTEND_DIST_DIR) {
+	FRONTEND_DIST_DIR = './public/dist';
+	console.error('FRONTEND_DIST_DIR environment variable is not set');
+}
+
+if (!fs.existsSync(FRONTEND_DIST_DIR)) {
+	console.error(`Frontend build does not exist or FRONTEND_DIST_DIR has the wrong path`);
+}
+
+FRONTEND_DIST_DIR = path.resolve(FRONTEND_DIST_DIR);
 
 if (!fs.existsSync(DB_DIR)) {
 	fs.mkdirSync(DB_DIR, { recursive: true });

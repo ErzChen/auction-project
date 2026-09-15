@@ -17,8 +17,17 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { useAuctionContext } from '../context/AuctionContext';
 import { Skeleton } from './Skeleton';
 import { getBids, getImageUrl } from '../lib/auctionActions';
+import { Auction } from '../constants/types';
 
-function AuctionCard({ auction, style, onEdit }) {
+function AuctionCard({
+	auction,
+	style,
+	onEdit,
+}: {
+	auction: Auction & { view_count?: number };
+	style?: any;
+	onEdit?: (auction: Auction) => void;
+}) {
 	const [imgError, setImgError] = useState(false);
 	const [now, setNow] = useState(Date.now());
 	const [bidCount, setBidCount] = useState(0);
@@ -158,11 +167,19 @@ function AuctionCard({ auction, style, onEdit }) {
 
 				{!isSold && (
 					<TouchableOpacity
-						style={[styles.viewBtn, { backgroundColor: colors.surface, marginBottom: 8 }]}
+						style={[
+							styles.viewBtn,
+							{ backgroundColor: colors.surface, marginBottom: 8 },
+						]}
 						onPress={() => onEdit?.(auction)}
 					>
-						<AppText style={[styles.viewBtnText, { color: colors.navy }]}>Edit listing</AppText>
-						<FontAwesome6 name="pen" style={[styles.viewBtnIcon, { color: colors.navy }]} />
+						<AppText style={[styles.viewBtnText, { color: colors.navy }]}>
+							Edit listing
+						</AppText>
+						<FontAwesome6
+							name="pen"
+							style={[styles.viewBtnIcon, { color: colors.navy }]}
+						/>
 					</TouchableOpacity>
 				)}
 			</View>
@@ -170,7 +187,7 @@ function AuctionCard({ auction, style, onEdit }) {
 	);
 }
 
-function AuctionCardSkeleton({ style }) {
+function AuctionCardSkeleton({ style }: { style?: any }) {
 	return (
 		<View style={[styles.card, style]}>
 			<Skeleton style={[styles.cardMedia, sharedStyles.skeletonBlock]}></Skeleton>
@@ -204,7 +221,11 @@ function AuctionCardSkeleton({ style }) {
 	);
 }
 
-export function AuctionListings({ onEdit }) {
+export function AuctionListings({
+	onEdit,
+}: {
+	onEdit?: (auction: Auction) => void;
+}) {
 	const {
 		auctions,
 		loading,
@@ -282,8 +303,8 @@ export function AuctionListings({ onEdit }) {
 								onPress={prevPage}
 								disabled={page === 0 || loading}
 							>
-								<FontAwesome6 
-									name="chevron-left" 
+								<FontAwesome6
+									name="chevron-left"
 									style={[
 										styles.pageNavArrowIcon,
 										(page === 0 || loading) && styles.pageNavArrowDisabled,

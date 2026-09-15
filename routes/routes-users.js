@@ -23,7 +23,10 @@ import { authenticate } from '../middleware/auth.js';
 import jwt from 'jsonwebtoken';
 import { cancelBidByUserId } from '../middleware/bids-db.js';
 import { cancelPreBidByUserId } from '../middleware/prebids-db.js';
-import { deleteAuctionByUserId, getAuctionImagePathsByUserId } from '../middleware/auctions-db.js';
+import {
+	deleteAuctionByUserId,
+	getAuctionImagePathsByUserId,
+} from '../middleware/auctions-db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -118,7 +121,11 @@ router.post('/api/login', async (req, res) => {
 			return res.status(401).json({ message: 'Invalid username or password' });
 
 		const token = createLoginSession(db, res, userRow.user_id, rememberMe);
-		const user = { id: userRow.user_id, username: userRow.username, email: userRow.email };
+		const user = {
+			id: userRow.user_id,
+			username: userRow.username,
+			email: userRow.email,
+		};
 
 		res.status(200).json({ user, token });
 	} catch (err) {
@@ -220,18 +227,6 @@ router.post('/api/reset-password', async (req, res) => {
 		console.error(err);
 		res.status(500).json({ message: 'Something went wrong' });
 	}
-});
-
-router.get('/reset-password', (req, res) => {
-	res.sendFile(
-		path.join(__dirname, '../public/pages/reset-password.html'),
-		(err) => {
-			if (err) {
-				console.error(err);
-				res.status(500).send('Something went wrong');
-			}
-		},
-	);
 });
 
 router.get('/api/user/:user_id', async (req, res) => {

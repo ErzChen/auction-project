@@ -1,11 +1,15 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { AuthContext } from './AuthContext';
 import { User } from '../constants/types';
-import { getToken, setToken as presistToken, removeToken } from '../lib/tokenStorage';
+import {
+	getToken,
+	setToken as presistToken,
+	removeToken,
+} from '../lib/tokenStorage';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
-	const [token, setToken] = useState(null);
+	const [token, setToken] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -17,7 +21,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 					return;
 				}
 				const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE}/api/me`, {
-					headers: { Authorization: `Bearer ${storedToken}`, 'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY },
+					headers: {
+						Authorization: `Bearer ${storedToken}`,
+						'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY,
+					},
 				});
 				if (res.ok) {
 					setUser(await res.json());
@@ -45,7 +52,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		try {
 			await fetch(`${process.env.EXPO_PUBLIC_API_BASE}/api/logout`, {
 				method: 'POST',
-				headers: { Authorization: `Bearer ${token}`, 'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY },
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'X-Auction-Application-Key': process.env.EXPO_PUBLIC_SECRET_KEY,
+				},
 			});
 		} finally {
 			await removeToken();
@@ -55,7 +65,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	}
 
 	return (
-		<AuthContext.Provider value={{ user, setUser, token, saveSession, loading, logout }}>
+		<AuthContext.Provider
+			value={{ user, setUser, token, saveSession, loading, logout }}
+		>
 			{children}
 		</AuthContext.Provider>
 	);

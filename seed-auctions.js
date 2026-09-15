@@ -13,12 +13,13 @@ const DEFAULT_INCREMENT_RULES = JSON.stringify([
 const now = new Date();
 
 function dt(offsetDays = 0, offsetHours = 0, offsetMinutes = 0) {
-  const ms = now.getTime() 
-    + (offsetDays * 24 * 60 * 60 * 1000) 
-    + (offsetHours * 60 * 60 * 1000) 
-    + (offsetMinutes * 60 * 1000);
-    
-  return new Date(ms).toISOString();
+	const ms =
+		now.getTime() +
+		offsetDays * 24 * 60 * 60 * 1000 +
+		offsetHours * 60 * 60 * 1000 +
+		offsetMinutes * 60 * 1000;
+
+	return new Date(ms).toISOString();
 }
 
 function seedBidsForAuction(
@@ -238,7 +239,7 @@ export function seedDatabase() {
 			condition: 'Excellent',
 			location: 'New York, NY',
 			latitude: 40.7128,
-			longitude: -74.0060,
+			longitude: -74.006,
 			category: 'Jewelry & Watches',
 			start_time: dt(-22, 9),
 			end_time: dt(-15, 9),
@@ -254,7 +255,7 @@ export function seedDatabase() {
 			description: '9x12ft, hand-knotted wool, early 1900s',
 			condition: 'Good',
 			location: 'Santa Fe, NM',
-			latitude: 35.6870,
+			latitude: 35.687,
 			longitude: -105.9378,
 			category: 'Home & Garden',
 			start_time: dt(-8, 7),
@@ -320,7 +321,7 @@ export function seedDatabase() {
 			description: '24x36in, framed, artist unknown',
 			condition: 'Good',
 			location: 'Providence, RI',
-			latitude: 41.8240,
+			latitude: 41.824,
 			longitude: -71.4128,
 			category: 'Home & Garden',
 			start_time: dt(-18, 10, 30),
@@ -338,7 +339,7 @@ export function seedDatabase() {
 			condition: 'Excellent',
 			location: 'Minneapolis, MN',
 			latitude: 44.9778,
-			longitude: -93.2650,
+			longitude: -93.265,
 			category: 'Home & Garden',
 			start_time: dt(-8, 6),
 			end_time: dt(-1, 6),
@@ -372,7 +373,7 @@ export function seedDatabase() {
 			condition: 'Excellent',
 			location: 'Salt Lake City, UT',
 			latitude: 40.7608,
-			longitude: -111.8910,
+			longitude: -111.891,
 			category: 'Sporting Goods',
 			start_time: dt(-10, 17),
 			end_time: dt(-3, 17),
@@ -388,7 +389,7 @@ export function seedDatabase() {
 			condition: 'Excellent',
 			location: 'Memphis, TN',
 			latitude: 35.1495,
-			longitude: -90.0490,
+			longitude: -90.049,
 			category: 'Other',
 			start_time: dt(-11, 9),
 			end_time: dt(-4, 9),
@@ -471,7 +472,7 @@ export function seedDatabase() {
 			condition: 'Excellent',
 			location: 'Ann Arbor, MI',
 			latitude: 42.2808,
-			longitude: -83.7430,
+			longitude: -83.743,
 			category: 'Furniture',
 			start_time: dt(-11, 10),
 			end_time: dt(-4, 10),
@@ -487,7 +488,7 @@ export function seedDatabase() {
 			description: '256GB, Wi-Fi + Cellular, Magic Keyboard included',
 			condition: 'Excellent',
 			location: 'Cupertino, CA',
-			latitude: 37.3230,
+			latitude: 37.323,
 			longitude: -122.0322,
 			category: 'Electronics',
 			start_time: dt(-10, 9),
@@ -554,7 +555,7 @@ export function seedDatabase() {
 			description: 'Includes weights and shoes, size 9',
 			condition: 'Excellent',
 			location: 'Boulder, CO',
-			latitude: 40.0150,
+			latitude: 40.015,
 			longitude: -105.2705,
 			category: 'Sporting Goods',
 			start_time: dt(-8, 10),

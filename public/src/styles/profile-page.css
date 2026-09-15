@@ -6,7 +6,7 @@ body {
 }
 
 .profile-page {
-    display: flex;
+	display: flex;
 	align-items: flex-start;
 	flex-direction: row;
 	min-height: 90vh;

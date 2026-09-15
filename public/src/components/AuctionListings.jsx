@@ -16,6 +16,7 @@ function getFirstImage(imagePathsJson) {
 
 function AuctionCard({ auction }) {
 	const {
+		auction_id: auctionId,
 		user_id: userId,
 		starting_price: startingPrice,
 		current_price: currentPrice,
@@ -53,7 +54,11 @@ function AuctionCard({ auction }) {
 		<article className="listing-card">
 			<div className="listing-card-media">
 				{!imgError ? (
-					<img src={getImageUrl(imageUrl)} alt={title} onError={() => setImgError(true)} />
+					<img
+						src={getImageUrl(imageUrl)}
+						alt={title}
+						onError={() => setImgError(true)}
+					/>
 				) : (
 					<i
 						className="fa-solid fa-gavel listing-card-placeholder-icon"
@@ -67,7 +72,9 @@ function AuctionCard({ auction }) {
 				<div className="listing-info-row">
 					<span className="listing-info-item">
 						<i className="fa-solid fa-user" aria-hidden="true"></i>
-						{username || 'Username unknown'}
+						<a href={`/profile/${userId}`}>
+							{username || 'Unknown seller'}
+						</a>
 					</span>
 
 					<span className="listing-info-item">
@@ -79,25 +86,35 @@ function AuctionCard({ auction }) {
 						<i className="fa-solid fa-calendar-days" aria-hidden="true"></i>
 						{formatDate(startDate)} – {formatDate(endDate)}
 					</span>
-					{isShippingAvailable ? 
+					{isShippingAvailable ? (
 						<span className="listing-info-item">
 							<i className="fa-solid fa-truck" aria-hidden="true"></i>
 							Shipping available
 						</span>
-					: ''}
+					) : (
+						''
+					)}
 				</div>
 
 				<p className="listing-description">{description}</p>
 
 				<div className="listing-price-block">
 					<span className="listing-price-label">
-						{isSold ? 'Sold for' : isUpcoming ? 'Starting at' : isExpired ? 'Ended, no bids won' : 'Current bid'}
+						{isSold
+							? 'Sold for'
+							: isUpcoming
+								? 'Starting at'
+								: isExpired
+									? 'Ended, no bids won'
+									: 'Current bid'}
 					</span>
 					<span className="listing-price-value">
-						{(isUpcoming ? formatPrice(startingPrice, currency) : formatPrice(currentPrice, currency)) || '-'}
+						{(isUpcoming
+							? formatPrice(startingPrice, currency)
+							: formatPrice(currentPrice, currency)) || '-'}
 					</span>
 				</div>
-				<button type="button" className="listing-view-btn">
+				<button type="button" className="listing-view-btn" onClick={() => window.location.href = `/listing/${auctionId}`}>
 					View listing <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
 				</button>
 			</div>
@@ -141,10 +158,12 @@ export function AuctionListing({ user = null }) {
 		<div className="auction-listing-section">
 			<div className="listing-header">
 				<div>
-					<h1 style={user ? { marginBottom: 8 } : null}>{user && `${username}'s `}Listings</h1>
+					<h1 style={user ? { marginBottom: 8 } : null}>
+						{user && `${username}'s `}Listings
+					</h1>
 					{user && <span>Email: {email}</span>}
 				</div>
-				
+
 				{!loading && !error && (
 					<span className="listing-count">
 						{auctions.length} listing{auctions.length === 1 ? '' : 's'} shown

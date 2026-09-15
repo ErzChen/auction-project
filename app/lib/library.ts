@@ -1,10 +1,10 @@
-export function formatPrice(price, currency = 'USD') {
+export function formatPrice(price: number, currency = 'USD') {
 	const num = price;
 	if (Number.isNaN(num)) return '—';
 	return `${new Intl.NumberFormat(undefined, { style: 'currency', currency, currencyDisplay: 'narrowSymbol' }).format(num)} ${currency}`;
 }
 
-export function formatDate(value) {
+export function formatDate(value: string | null) {
 	if (!value) return '—';
 	const date = new Date(value);
 	if (Number.isNaN(date.getTime())) return '—';
@@ -15,7 +15,7 @@ export function formatDate(value) {
 	});
 }
 
-export function formatDateTime(value) {
+export function formatDateTime(value: string | null) {
 	if (!value) return '—';
 	const date = new Date(value);
 	if (Number.isNaN(date.getTime())) return '—';
@@ -28,6 +28,16 @@ export function formatDateTime(value) {
 	});
 }
 
+export function toDateTimeLocal(value?: string | null) {
+	if (!value) return '';
+	const date = new Date(value);
+	if (Number.isNaN(date.getTime())) return '';
+	const pad = (n: number) => String(n).padStart(2, '0');
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
+		date.getHours(),
+	)}:${pad(date.getMinutes())}`;
+}
+
 export function getIdFromUrl() {
 	const urlStr = window.location.href;
 	const url = new URL(urlStr);
@@ -35,14 +45,16 @@ export function getIdFromUrl() {
 	return segments.pop();
 }
 
-export function getNextMinBid(currentPrice, rules) {
+export function getNextMinBid(currentPrice: number, rules: Array<{min:number; max?:number; increment:number}>) {
 	const price = Number(currentPrice);
 	if (Number.isNaN(price) || rules.length === 0) return null;
-	const rule = rules.find((r) => price >= r.min && (r.max == null || price < r.max));
+	const rule = rules.find(
+		(r) => price >= r.min && (r.max == null || price < r.max),
+	);
 	return rule ? price + rule.increment : null;
 }
 
-export function formatTimeRemaining(endTime, now) {
+export function formatTimeRemaining(endTime: string | null, now: number) {
 	if (!endTime) return '—';
 	const diff = new Date(endTime).getTime() - now;
 	if (Number.isNaN(diff)) return '—';
@@ -58,31 +70,4 @@ export function formatTimeRemaining(endTime, now) {
 	if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
 	if (minutes > 0) return `${minutes}m ${seconds}s`;
 	return `${seconds}s`;
-}
-
-export function sortBids(bids) {
-	const bidders = {};
-	const activeBids = bids
-		.filter((b) => !b.is_cancelled)
-		.sort((a, b) => new Date(a.created_at).getMilliseconds() - new Date(b.created_at).getMilliseconds());
-
-	for (const bid of activeBids) {
-		const userId = bid.user_id;
-		if (!bidders[userId]) {
-			bidders[userId] = { count: 1, highest: bid.amount, lastBidAt: bid.created_at };
-			continue;
-		}
-		const bidder = bidders[userId];
-		bidder.count += 1;
-		if (bid.amount > bidder.highest) bidder.highest = bid.amount;
-		if (new Date(bid.created_at) > new Date(bidder.lastBidAt)) bidder.lastBidAt = bid.created_at;
-	}
-
-	return Object.keys(bidders)
-		.map((userId, i) => ({
-			userId,
-			label: `Bidder ${String.fromCharCode(65 + (i % 26))}${i >= 26 ? Math.floor(i / 26) : ''}`,
-			...bidders[userId],
-		}))
-		.sort((a, b) => b.highest - a.highest);
 }

@@ -34,10 +34,14 @@ export function authenticate(req, res, next) {
 }
 
 export function verifyApplication(req, res, next) {
-	if (req.headers.origin == FRONTEND_URL) return next();
+	const requestOrigin = req.headers.origin;
+	const selfOrigin = `${req.protocol}://${req.get('host')}`;
+
+	if (!requestOrigin || requestOrigin === FRONTEND_URL || requestOrigin === selfOrigin) {
+		return next();
+	}
 
 	const token = req.header('X-Auction-Application-Key');
-
 	if (token == APPLICATION_SECRET_KEY) return next();
 
 	return res.status(401).json({ message: 'Unauthorized: Access Denied.' });

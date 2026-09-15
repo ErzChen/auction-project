@@ -1,4 +1,4 @@
-import db from "./db.js";
+import db from './db.js';
 
 export const insertBid = db.prepare(`
 	INSERT INTO bids (auction_id, user_id, amount, is_winning, is_cancelled)
@@ -33,7 +33,9 @@ export const cancelBidById = db.prepare(`
 	UPDATE bids SET is_cancelled = 1, is_winning = 0 WHERE bid_id = ?
 `);
 
-export const setBidWinning = db.prepare(`UPDATE bids SET is_winning = 1 WHERE bid_id = ?`);
+export const setBidWinning = db.prepare(
+	`UPDATE bids SET is_winning = 1 WHERE bid_id = ?`,
+);
 
 export const clearWinningBids = db.prepare(`
 	UPDATE bids SET is_winning = 0 WHERE auction_id = ? AND is_winning = 1

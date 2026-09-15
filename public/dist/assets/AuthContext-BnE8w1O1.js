@@ -1,0 +1,1 @@
+import{r as e}from"./jsx-runtime-Bpy7BmLN.js";var t=`/assets/gavel-logo-Feh14Kzf.png`,n=e(),r=(0,n.createContext)(null);function i(){return(0,n.useContext)(r)}export{i as n,t as r,r as t};

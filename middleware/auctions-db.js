@@ -5,7 +5,6 @@ import { FRONTEND_URL, resend } from '../config.js';
 import { getUserById } from './users-db.js';
 import { getIo } from './socket.js';
 
-
 export const insertAuction = db.prepare(`
 	INSERT INTO auctions (
 		user_id, starting_price, current_price, bid_increment_rules, currency,
@@ -57,6 +56,28 @@ export const softDeleteAuction = db.prepare(`
 	SET deleted = 1, deleted_at = datetime('now'), updated_at = datetime('now')
 	WHERE auction_id = ?
 `);
+
+export const getAuctionsToDelete = db.prepare(`
+	SELECT * FROM auctions
+	WHERE status IN ('sold', 'expired')
+	AND datetime(end_time) <= datetime('now', '-30 days')
+`);
+
+export const hardDeleteAuction = db.prepare(`
+	DELETE FROM auctions WHERE auction_id = ?
+`);
+
+export async function cleanupExpiredAuctions() {
+	const toDelete = getAuctionsToDelete.all();
+	if (toDelete.length === 0) return;
+
+	for (const auction of toDelete) {
+		await deleteImageFiles(auction.image_paths);
+		hardDeleteAuction.run(auction.auction_id);
+	}
+
+	console.log(`Deleted ${toDelete.length} auction(s) older than 30 days`);
+}
 
 export const updateAuctionCurrentPrice = db.prepare(`
 	UPDATE auctions SET current_price = ?, updated_at = datetime('now') WHERE auction_id = ?
@@ -148,8 +169,13 @@ export function searchAuctions(filters = {}) {
 	const safeLimit = Number(limit) || 20;
 	const safeOffset = Number(offset) || 0;
 
-	const hasDistanceFilter = lat !== undefined && lng !== undefined && radius !== undefined
-		&& lat !== '' && lng !== '' && radius !== '';
+	const hasDistanceFilter =
+		lat !== undefined &&
+		lng !== undefined &&
+		radius !== undefined &&
+		lat !== '' &&
+		lng !== '' &&
+		radius !== '';
 
 	if (!hasDistanceFilter) {
 		params.push(safeLimit, safeOffset);

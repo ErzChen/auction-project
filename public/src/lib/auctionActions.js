@@ -16,7 +16,9 @@ export async function getAuctions(filters) {
 	if (filters.limit) params.set('limit', filters.limit);
 	if (filters.offset) params.set('offset', filters.offset);
 
-	const res = await fetch(`${CONFIG.API_BASE}/api/auctions?${params.toString()}`);
+	const res = await fetch(
+		`${CONFIG.API_BASE}/api/auctions?${params.toString()}`,
+	);
 	if (!res.ok) throw new Error('Failed to fetch auctions');
 	const data = await res.json();
 	return data.auctions;
@@ -54,7 +56,9 @@ export async function cancelBid(bidId) {
 export function getNextMinBid(currentPrice, rules) {
 	const price = Number(currentPrice);
 	if (Number.isNaN(price) || rules.length === 0) return null;
-	const rule = rules.find((r) => price >= r.min && (r.max == null || price < r.max));
+	const rule = rules.find(
+		(r) => price >= r.min && (r.max == null || price < r.max),
+	);
 	return rule ? price + rule.increment : null;
 }
 
@@ -67,13 +71,18 @@ export function sortBids(bids) {
 	for (const bid of activeBids) {
 		const userId = bid.user_id;
 		if (!bidders[userId]) {
-			bidders[userId] = { count: 1, highest: bid.amount, lastBidAt: bid.created_at };
+			bidders[userId] = {
+				count: 1,
+				highest: bid.amount,
+				lastBidAt: bid.created_at,
+			};
 			continue;
 		}
 		const bidder = bidders[userId];
 		bidder.count += 1;
 		if (bid.amount > bidder.highest) bidder.highest = bid.amount;
-		if (new Date(bid.created_at) > new Date(bidder.lastBidAt)) bidder.lastBidAt = bid.created_at;
+		if (new Date(bid.created_at) > new Date(bidder.lastBidAt))
+			bidder.lastBidAt = bid.created_at;
 	}
 
 	return Object.keys(bidders)
@@ -86,7 +95,9 @@ export function sortBids(bids) {
 }
 
 export async function getPreBid(auctionId) {
-	const res = await fetch(`${CONFIG.API_BASE}/api/pre-bids/${auctionId}`, { credentials: 'include' });
+	const res = await fetch(`${CONFIG.API_BASE}/api/pre-bids/${auctionId}`, {
+		credentials: 'include',
+	});
 	if (res.status === 401) return null;
 	if (!res.ok) throw new Error('Failed to fetch pre-bid');
 	const data = await res.json();
@@ -118,4 +129,3 @@ export async function cancelPreBid(preBidId) {
 export function getImageUrl(filename) {
 	return `${CONFIG.API_BASE}/uploads/${filename}`;
 }
-

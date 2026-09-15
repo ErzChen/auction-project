@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext.js';
 import '../styles/auth-form.css';
 
 export function AuthForm({ onForgotPassword }) {
 	function onAuthSuccess(user) {
 		setUser(user);
-		navigate('/auctions');
+		window.location.assign('/');
 	}
 
 	async function handleSignIn(e) {
@@ -89,9 +88,8 @@ export function AuthForm({ onForgotPassword }) {
 	const [error, setError] = useState(null);
 
 	const { user, setUser } = useAuthContext();
-	const navigate = useNavigate();
 
-	if (user) return <Navigate to="/auctions" replace />;
+	if (user) window.document.href = '/';
 
 	return (
 		<div className="auth-form-panel">

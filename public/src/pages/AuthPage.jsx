@@ -1,5 +1,4 @@
 import { StrictMode, useEffect, useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import gavelLogo from '../../images/gavel-logo.png';
 import '../styles/auth-page.css';
@@ -108,10 +107,8 @@ export function AuthPage() {
 
 createRoot(document.getElementById('root')).render(
 	<StrictMode>
-		<BrowserRouter>
-			<AuthProvider>
-				<AuthPage />
-			</AuthProvider>
-		</BrowserRouter>
+		<AuthProvider>
+			<AuthPage />
+		</AuthProvider>
 	</StrictMode>,
 );
